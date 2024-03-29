@@ -1,0 +1,77 @@
+body {
+  background-color: rgb(153, 153, 153);
+}
+
+#start-popup {
+  background-color: rgb(255, 217, 160);
+  width: 400px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  border-radius: 15px;
+}
+
+#title-name {
+  font-size: 50px;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  text-align: center;
+}
+
+#intro {
+  text-align: center;
+}
+
+#input{
+  display: flex;
+  justify-content: center;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+}
+
+#start {
+  background-color: rgb(99, 161, 47);
+  color: white;
+  width: 100px;
+  padding: 5px;
+  display: none;
+}
+
+
+
+/* #container-remove {
+  background-color: rgb(197, 197, 197);
+  width: 470px;
+  height: 125px;
+  margin: 25px auto;
+}
+
+#game-board {
+  border: 2px solid black;
+  width: 465px;
+  height: 600px;
+  margin: 25px auto;
+}
+
+#container-button {
+  width: 470px;
+  display: flex;
+  justify-content: space-evenly;
+  margin: 30px auto;
+} */
+
+/* #player1Box {
+  background-color: rgb(46, 93, 182);
+  width: 250px;
+  height: 100px;
+}
+
+#player2Box {
+  background-color: rgb(133, 187, 34);
+  width: 250px;
+  height: 100px;
+} */

@@ -6,10 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Start Page</title>
   <link type="text/css" rel="stylesheet" href="style.css">
+  <script src="board-piece.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 
 <body>
+  <!-- Start Page -->
   <div id="start-popup">
 
     <div id="title-name">Animal Chess</div>
@@ -35,9 +37,18 @@
           <button id="start" type="button">Start</button>
         </div>
       </form>
-
     </div>
 
+  </div>
+
+  <!-- Random Player Selection -->
+  <div id="player-selection">
+    <p id="player-name"></p>
+  </div>
+
+  <!-- Reveal GameBoard SetUp -->
+  <div id="game-container">
+    <div id="gameboard"></div>
   </div>
 
 </body>

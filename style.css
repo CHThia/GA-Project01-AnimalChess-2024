@@ -15,15 +15,18 @@ body {
 
 #title-name {
   font-size: 50px;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   text-align: center;
 }
 
 #intro {
   text-align: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
 }
 
-#input{
+#input {
   display: flex;
   justify-content: center;
 }
@@ -34,16 +37,128 @@ body {
 }
 
 #start {
-  background-color: rgb(99, 161, 47);
-  color: white;
+  background-color: rgb(41, 129, 23);
+  color: rgb(255, 255, 255);
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   width: 100px;
   padding: 5px;
   display: none;
 }
 
+#player-selection {
+  background-color: rgb(41, 129, 23);
+  width: 400px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 15px;
+  display: none;
+}
+
+#player-name {
+  color: white;
+  text-align: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+#game-container {
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#gameboard {
+  background-color: rgb(155, 95, 15);
+  border: 3px solid rgb(155, 95, 15);
+  width: 560px;
+  height: 720px;
+  justify-content: space-between;
+  padding-top: 3px;
+  padding-left: 2px;
+  padding-right: 2px;
+  display: none;
+}
+
+.square {
+  background-color: white;
+  width: 78px;
+  height: 78px;
+}
+
+.traps {
+  background-color: rgb(255, 192, 109);
+}
+
+.river {
+  background-color: rgb(56, 176, 255);
+}
+
+.beastDen {
+  background-color: rgb(105, 145, 32);
+}
+
+/* player1 - animal pieces */
+#animal-P1-lion,
+#animal-P1-tiger,
+#animal-P1-dog,
+#animal-P1-cat,
+#animal-P1-rat,
+#animal-P1-leopard,
+#animal-P1-wolf,
+#animal-P1-elephant {
+  background-color: rgb(255, 93, 93);
+  z-index: 11;
+  visibility: visible;
+  width: 72px;
+  height: 72px;
+  margin-top: 3px;
+  margin-left: 3px;
+  border-radius: 35px;
+}
+
+/* player2 - animal pieces */
+#animal-P2-lion,
+#animal-P2-tiger,
+#animal-P2-dog,
+#animal-P2-cat,
+#animal-P2-rat,
+#animal-P2-leopard,
+#animal-P2-wolf,
+#animal-P2-elephant {
+  background-color: rgb(134, 91, 204);
+  z-index: 11;
+  visibility: visible;
+  width: 72px;
+  height: 72px;
+  margin-top: 3px;
+  margin-left: 3px;
+  border-radius: 35px;
+}
 
 
-/* #container-remove {
+/* Highlight Possible Box Movement */
+/* .possible-boxes {
+  border-width: 5px;
+} */
+
+
+/* KIV - DO NOT DELETE */
+
+/*.boardgame-row {
+  border: 1px solid rgb(173, 32, 32);
+  display: flex;
+}
+
+.boardgame-column {
+  border: 1px solid rgb(173, 32, 32);
+} 
+
+#container-remove {
   background-color: rgb(197, 197, 197);
   width: 470px;
   height: 125px;
@@ -62,9 +177,9 @@ body {
   display: flex;
   justify-content: space-evenly;
   margin: 30px auto;
-} */
+} 
 
-/* #player1Box {
+#player1Box {
   background-color: rgb(46, 93, 182);
   width: 250px;
   height: 100px;

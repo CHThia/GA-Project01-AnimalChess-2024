@@ -140,11 +140,9 @@ body {
   border-radius: 35px;
 }
 
-
-/* Highlight Possible Box Movement */
-/* .possible-boxes {
-  border-width: 5px;
-} */
+.highlighted {
+  background-color: yellow;
+}
 
 
 /* KIV - DO NOT DELETE */

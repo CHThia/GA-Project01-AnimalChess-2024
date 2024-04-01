@@ -140,10 +140,14 @@ body {
   border-radius: 35px;
 }
 
+/* Test Only */
+#animal-P2-dog:hover {
+  background-color: blue;
+}
+
 .highlighted {
   background-color: yellow;
 }
-
 
 /* KIV - DO NOT DELETE */
 

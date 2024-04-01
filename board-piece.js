@@ -21,6 +21,8 @@ const noLeftSide = [1, 8, 15, 22, 29, 36, 43, 50, 57];
 const tokens = ["P1-lion", "P1-tiger", "P1-dog", "P1-cat", "P1-rat", "P1-leopard", "P1-wolf", "P1-elephant", "P2-lion", "P2-tiger", "P2-dog", "P2-cat", "P2-rat", "P2-leopard", "P2-wolf", "P2-elephant"]
 
 
+const colorSquares = ["traps", "beastDen", "river"];
+
 
 // To search for item in array
 // tokens.indexOf('apple')

@@ -1,21 +1,28 @@
 console.log("Webpage is working properly.");
 
-
-
-//* Global Variables
+//* Global Variables (Start)
 // collect list of players name
 const namelist = [];
 
+// * Global Variables (Game)
 // Update of occupy and non-occupied spaces
 let occupiedSquares = [];
 
 // selected piece will have animal piece name and parentId (white square)
 let selectedPiece = { name: "", parentId: null };
 
+// =========================================================================
 
+//* Player Details (Start)
 
+// introduction text
+const intro = document.getElementById("intro");
+intro.textContent = "To begin gameplay, enter 2 names in the input box below.";
 
-//* Function
+// player to start
+const playerName = document.getElementById("player-name");
+playerName.textContent = "Please wait... Game is selecting player to start...";
+
 // random select player name to start the game play
 const randomSelectName = () => {
   return namelist[Math.floor(Math.random() * namelist.length)];
@@ -31,56 +38,9 @@ const loadReveal = () => {
 //exit loading
 const exitLoad = () => {
   playerSelection.style.display = "none";
-  createGameBoard();
+  renderGameBoard();
 }
 
-// player select to start gameplay
-const playerStart = () => { };
-
-// function to highlight surrounding divs
-const highlightSurroundingDivs = (parentDivId) => {
-  // Calculate surrounding div IDs
-  let surroundingDiv = {
-    top: parseInt(parentDivId) - 7,
-    right: parseInt(parentDivId) + 1,
-    bottom: parseInt(parentDivId) + 7,
-    left: parseInt(parentDivId) - 1,
-  };
-  // Top Edge perimeter
-  if (noTopSide.indexOf(parseInt(parentDivId)) > -1) {
-    surroundingDiv.top = 0;
-  }
-  // Right Edge perimeter
-  if (noRightSide.indexOf(parseInt(parentDivId)) > -1) {
-    surroundingDiv.right = 0;
-  }
-  // Bottom Edge perimeter
-  if (noBottomSide.indexOf(parseInt(parentDivId)) > -1) {
-    surroundingDiv.bottom = 0;
-  }
-  // Left Edge perimeter
-  if (noLeftSide.indexOf(parseInt(parentDivId)) > -1) {
-    surroundingDiv.left = 0;
-  }
-  // Extract Div id into an array
-  Object.values(surroundingDiv).forEach(id => {
-    const surroundingDiv = document.getElementById(id.toString());
-    if (surroundingDiv) {
-      surroundingDiv.classList.add('highlighted');
-    }
-  });
-};
-// Remove Highlight divs
-const removeHighlight = () => {
-  const highlightedDivs = document.querySelectorAll('.highlighted');
-
-  highlightedDivs.forEach(div => {
-    div.classList.remove('highlighted')
-  });
-};
-
-
-//* Handler
 // get player 1 name input
 let name1Input = document.getElementById("name1-input")
 let enter1 = document.getElementById("enter-name1");
@@ -119,75 +79,133 @@ start.addEventListener("click", function () {
   setTimeout(exitLoad, 2500); //exit loading... and reveal gameboard
 });
 
-//Handler select square
-const selectTargetSquare = (event) => {
-  event.preventDefault();
-  //TODO: check if target is colored square
-  //TODO:check if move is allowed
+// =========================================================================
 
-  console.log(`White Square id ${event.target.id} is selected.`);
-  //push event target id into occupiedSquares
+//* Game Controls
 
-  occupiedSquares.push(parseInt(event.target.id));
-  console.log('add piece', occupiedSquares);
-
-  //remove selectedPiece ParentId from occupiedSquare
-  let parentId = parseInt(selectedPiece.parentId)
-  let parentIdx = occupiedSquares.indexOf(parentId)
-  console.log('parent idx', parentIdx)
-  occupiedSquares.splice(parentIdx, 1)
-  console.log('after remove', occupiedSquares)
-
-  //append selectedPiece div to selected div
-  let animalPiece = document.getElementById(selectedPiece.name);
-  let oldSpace = document.getElementById(selectedPiece.parentId);
-  oldSpace.addEventListener("click", selectTargetSquare);
-  event.target.appendChild(animalPiece);
-  console.log('Test', selectedPiece);
-  event.target.removeEventListener("click", selectTargetSquare);
-
-  //reset selectedPiece
-  selectedPiece = { name: "", parentId: null };
-  removeHighlight()
-}
-
-// Handle select color square
-const selectColorSquare = (event) => {
-  event.preventDefault();
-  console.log(`Color square is ${event.target.id}.`);
-}
-
-// Handle select animal piece
+// select Animal Piece function
 const selectAnimalPiece = (event) => {
   event.preventDefault();
 
   if (selectedPiece.name.length > 0) {
-    removeHighlight();
+    removeHighlight(); // call remove Highlight function
     selectedPiece = { name: "", parentId: null };
+    return;
   } else {
     selectedPiece.name = event.target.id;
-
-    //check parent div ID 
-    const parentDivId = event.target.parentNode.id;
+    let parentDivId = event.target.parentNode.id; //check parent div ID 
     selectedPiece.parentId = parseInt(parentDivId);
-
-    console.log('selectedPiece', selectedPiece);
-
-    // Highlight surrounding divs
+    console.log('Selected Animal', selectedPiece);
+    // call highlight SurroundingDivs function
     highlightSurroundingDivs(parentDivId);
   }
 };
 
-//* Render
-// render introduction text
-const renderIntro = document.getElementById("intro");
-renderIntro.textContent = "To begin gameplay, enter 2 names in the input box below.";
+// select Target Square function
+const selectTargetSquare = (event) => {
+  event.preventDefault();
+  if (selectedPiece.name.length === 0) {
+    console.log(`Target square ${event.target.id} selected.`);
+    alert("Please select Animal Piece to continue.");
+    return;
+  }
+  
+  //TODO: check if target is occupied
 
-// render player to start text
-const renderPlayerName = document.getElementById("player-name");
-renderPlayerName.textContent = "Please wait... Game is selecting player to start...";
+  console.log(`White Square id ${event.target.id} is selected.`);
+  //push event target id into occupiedSquares
+  let targeted = event.target.id;
 
-// render GameBoard
+  occupiedSquares.push(parseInt(targeted));
+  console.log('add piece', occupiedSquares);
+
+  //remove selectedPiece ParentId from occupiedSquare
+  let parentId = parseInt(selectedPiece.parentId);
+  let parentIdx = occupiedSquares.indexOf(parentId);
+  console.log('Parent id to remove', parentId);
+  occupiedSquares.splice(parentIdx, 1);
+  console.log('after remove', occupiedSquares);
+
+  //append selectedPiece to selected square
+  console.log('sp', selectedPiece)
+  let animalPiece = document.getElementById(selectedPiece.name);
+  let previousSquare = document.getElementById(selectedPiece.parentId);
+
+  previousSquare.addEventListener("click", selectTargetSquare);
+  event.target.appendChild(animalPiece);
+  event.target.removeEventListener("click", selectTargetSquare);
+
+  //reset selectedPiece
+  selectedPiece = { name: "", parentId: null };
+  removeHighlight();
+}
+
+// =========================================================================
+
+//* Helper Function
+
+// highlight SurroundingDiv function
+const highlightSurroundingDivs = (parentDivId) => {
+  // Calculate surrounding div IDs
+  let surroundingDiv = {
+    top: parseInt(parentDivId) - 7,
+    right: parseInt(parentDivId) + 1,
+    bottom: parseInt(parentDivId) + 7,
+    left: parseInt(parentDivId) - 1,
+  };
+  // Top Edge perimeter
+  if (noTopSide.indexOf(parseInt(parentDivId)) > -1) {
+    surroundingDiv.top = 0;
+  }
+  // Right Edge perimeter
+  if (noRightSide.indexOf(parseInt(parentDivId)) > -1) {
+    surroundingDiv.right = 0;
+  }
+  // Bottom Edge perimeter
+  if (noBottomSide.indexOf(parseInt(parentDivId)) > -1) {
+    surroundingDiv.bottom = 0;
+  }
+  // Left Edge perimeter
+  if (noLeftSide.indexOf(parseInt(parentDivId)) > -1) {
+    surroundingDiv.left = 0;
+  }
+  // Extract Div id into an array
+  Object.values(surroundingDiv).forEach(id => {
+    const surroundingDiv = document.getElementById(id.toString());
+    if (surroundingDiv) {
+      surroundingDiv.classList.add('highlighted');
+    }
+  });
+};
+
+// remove Highlight function
+const removeHighlight = () => {
+  const highlightedDivs = document.querySelectorAll('.highlighted');
+
+  highlightedDivs.forEach((divSquare) => {
+    divSquare.classList.remove('highlighted');
+  });
+};
+
+
+
+
+
+
+// =========================================================================
+
+//* Game Logic
+// compareAnimalPower()
+// canAnimalCrossRiver()
+// didAnimalEnterTrap()
+// didAnimalEnterDen()
+// checkOpponentRemainingPieces()
+
+// =========================================================================
+
+//* GameBoard Setup
+
+// render GameBoard function
 const gameBoard = document.querySelector("#gameboard");
 const renderGameBoard = () => {
 
@@ -203,22 +221,22 @@ const renderGameBoard = () => {
     square.setAttribute("id", (idx + 1));
     gameBoard.append(square);
 
-    //check for animal-piece and place on gameboard
+    //check for Animal Piece and place on gameboard
     if (tokens.indexOf(boardSetUp) > -1) {
       const animalPiece = document.createElement("div");
-      animalPiece.setAttribute('id', "animal-" + boardSetUp);
+      animalPiece.setAttribute("id", "animal-" + boardSetUp);
       square.appendChild(animalPiece);
-      animalPiece.addEventListener('click', selectAnimalPiece);
-      occupiedSquares.push((idx + 1)); // question to ask
-      console.log('pieces in OS ', occupiedSquares); // question to ask
+      animalPiece.addEventListener("click", selectAnimalPiece);
+      occupiedSquares.push((idx + 1)); // all animal piece on white squares
+      // console.log("Animal Pieces location:", occupiedSquares); // log purposes
 
-      //check for color squares and indicate on gameboard
+      //check for Color Squares and indicate on gameboard
     } else if (boardSetUp.length > 0) {
       square.classList.add(boardSetUp);
-      square.setAttribute("id", boardSetUp + (idx + 1));
+      square.setAttribute("id", (idx + 1));
       square.addEventListener("click", selectTargetSquare);
     } else {
-      square.addEventListener("click", selectTargetSquare);
+      square.addEventListener("click", selectTargetSquare); // white Squares
     }
   })
 };
@@ -226,33 +244,7 @@ const renderGameBoard = () => {
 // Call Function
 renderGameBoard();
 
-
-//Global Variables
-
-
-//For creating Gameboard
-//renderGameBoard()
 // TODO: add image source to token pieces
-
-
-//For game controls
-//selectAnimalPiece()
-//selectTargetSquare()
-
-
-// Game Logic
-// compareAnimalPower()
-// canAnimalCrossRiver()
-// didAnimalEnterTrap()
-// didAnimalEnterDen()
-// checkOpponentRemainingPieces()
-
-
-//helper functions
-//highlightSurroundingDiv()
-//removeHighlight()
-//checkIsTargetSquareColored() --- not yet
-
 
 
 

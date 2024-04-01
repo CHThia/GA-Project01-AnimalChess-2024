@@ -236,8 +236,8 @@ const renderGameBoard = () => {
   })
 };
 
-// Call Function
-renderGameBoard();
+renderGameBoard(); // call function (can be removed)
+
 
 // TODO: add image source to token pieces
 

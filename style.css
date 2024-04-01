@@ -121,6 +121,17 @@ body {
   border-radius: 35px;
 }
 
+#animal-P1-lion:hover,
+#animal-P1-tiger:hover,
+#animal-P1-dog:hover,
+#animal-P1-cat:hover,
+#animal-P1-rat:hover,
+#animal-P1-leopard:hover,
+#animal-P1-wolf:hover,
+#animal-P1-elephant:hover {
+  background-color: rgb(255, 161, 161);
+}
+
 /* player2 - animal pieces */
 #animal-P2-lion,
 #animal-P2-tiger,
@@ -140,55 +151,17 @@ body {
   border-radius: 35px;
 }
 
-/* Test Only */
-#animal-P2-dog:hover {
-  background-color: blue;
+#animal-P2-lion:hover,
+#animal-P2-tiger:hover,
+#animal-P2-dog:hover,
+#animal-P2-cat:hover,
+#animal-P2-rat:hover,
+#animal-P2-leopard:hover,
+#animal-P2-wolf:hover,
+#animal-P2-elephan:hover {
+  background-color: rgb(212, 186, 255);
 }
 
 .highlighted {
   background-color: yellow;
 }
-
-/* KIV - DO NOT DELETE */
-
-/*.boardgame-row {
-  border: 1px solid rgb(173, 32, 32);
-  display: flex;
-}
-
-.boardgame-column {
-  border: 1px solid rgb(173, 32, 32);
-} 
-
-#container-remove {
-  background-color: rgb(197, 197, 197);
-  width: 470px;
-  height: 125px;
-  margin: 25px auto;
-}
-
-#game-board {
-  border: 2px solid black;
-  width: 465px;
-  height: 600px;
-  margin: 25px auto;
-}
-
-#container-button {
-  width: 470px;
-  display: flex;
-  justify-content: space-evenly;
-  margin: 30px auto;
-} 
-
-#player1Box {
-  background-color: rgb(46, 93, 182);
-  width: 250px;
-  height: 100px;
-}
-
-#player2Box {
-  background-color: rgb(133, 187, 34);
-  width: 250px;
-  height: 100px;
-} */

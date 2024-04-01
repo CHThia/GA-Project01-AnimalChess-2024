@@ -109,7 +109,7 @@ const selectTargetSquare = (event) => {
     alert("Please select Animal Piece to continue.");
     return;
   }
-  
+
   //TODO: check if target is occupied
 
   console.log(`White Square id ${event.target.id} is selected.`);
@@ -186,11 +186,6 @@ const removeHighlight = () => {
     divSquare.classList.remove('highlighted');
   });
 };
-
-
-
-
-
 
 // =========================================================================
 

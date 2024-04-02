@@ -11,6 +11,18 @@ let occupiedSquares = [];
 // selected piece will have animal piece name and parentId (white square)
 let selectedPiece = { name: "", parentId: null };
 
+let animalPower = {
+  elephant: 8,
+  lion: 7,
+  tiger: 6,
+  leopard: 5,
+  dog: 4,
+  wolf: 3,
+  cat: 2,
+  rat: 1
+};
+
+
 // =========================================================================
 
 //* Player Details (Start)
@@ -83,19 +95,25 @@ start.addEventListener("click", function () {
 
 //* Game Controls
 
-// select Animal Piece function
+// select Animal Piece and move options (highlight squares)
 const selectAnimalPiece = (event) => {
   event.preventDefault();
 
   if (selectedPiece.name.length > 0) {
     removeHighlight(); // call remove Highlight function
     selectedPiece = { name: "", parentId: null };
+    console.log("Animal Piece deselected", selectedPiece);
     return;
   } else {
     selectedPiece.name = event.target.id;
-    let parentDivId = event.target.parentNode.id; //check parent div ID 
+    let parentDivId = event.target.parentNode.id; //get parentID of current square
     selectedPiece.parentId = parseInt(parentDivId);
-    console.log('Selected Animal', selectedPiece);
+    console.log('Animal piece selected', selectedPiece);
+
+    // Assign animal power to selected piece
+    selectedPiece.power = assignAnimalPower(selectedPiece.name);
+    console.log(selectedPiece.name, "has power:", selectedPiece.power);
+
     // call highlight SurroundingDivs function
     highlightSurroundingDivs(parentDivId);
   }
@@ -112,26 +130,24 @@ const selectTargetSquare = (event) => {
 
   //TODO: check if target is occupied
 
-  console.log(`White Square id ${event.target.id} is selected.`);
-  //push event target id into occupiedSquares
-  let targeted = event.target.id;
+  let targetedSquare = event.target.id;
+  console.log(`Move animal piece to square id ${event.target.id}.`);
 
-  occupiedSquares.push(parseInt(targeted));
-  console.log('add piece', occupiedSquares);
+  //push event target id into occupiedSquare[]
+  occupiedSquares.push(parseInt(targetedSquare));
+  console.log(`Added NEW Parent id ${event.target.id}`, occupiedSquares);
 
-  //remove selectedPiece ParentId from occupiedSquare
+  //remove previous Parent id of selectedPiece from occupiedSquare array
   let parentId = parseInt(selectedPiece.parentId);
   let parentIdx = occupiedSquares.indexOf(parentId);
-  console.log('Parent id to remove', parentId);
+  console.log('Remove Parent id', parentId);
   occupiedSquares.splice(parentIdx, 1);
   console.log('after remove', occupiedSquares);
 
-  //append selectedPiece to selected square
-  console.log('sp', selectedPiece)
+  //append selectedPiece >> New selected square
   let animalPiece = document.getElementById(selectedPiece.name);
-  let previousSquare = document.getElementById(selectedPiece.parentId);
-
-  previousSquare.addEventListener("click", selectTargetSquare);
+  let previousSelectedSquare = document.getElementById(selectedPiece.parentId);
+  previousSelectedSquare.addEventListener("click", selectTargetSquare);
   event.target.appendChild(animalPiece);
   event.target.removeEventListener("click", selectTargetSquare);
 
@@ -169,8 +185,9 @@ const highlightSurroundingDivs = (parentDivId) => {
   if (noLeftSide.indexOf(parseInt(parentDivId)) > -1) {
     surroundingDiv.left = 0;
   }
+
   // Extract Div id into an array
-  Object.values(surroundingDiv).forEach(id => {
+  Object.values(surroundingDiv).forEach((id) => {
     const surroundingDiv = document.getElementById(id.toString());
     if (surroundingDiv) {
       surroundingDiv.classList.add('highlighted');
@@ -187,11 +204,57 @@ const removeHighlight = () => {
   });
 };
 
+// assign Power Value to animal Piece for Player 1 and Player 2
+const assignAnimalPower = (selectedPiece) => {
+  switch (selectedPiece) {
+    case 'animal-P1-elephant':
+      return animalPower.elephant;
+    case 'animal-P2-elephant':
+      return animalPower.elephant;
+    case 'animal-P1-lion':
+      return animalPower.lion;
+    case 'animal-P2-lion':
+      return animalPower.lion;
+    case 'animal-P1-tiger':
+      return animalPower.tiger;
+    case 'animal-P2-tiger':
+      return animalPower.tiger;
+    case 'animal-P1-leopard':
+      return animalPower.leopard;
+    case 'animal-P2-leopard':
+      return animalPower.leopard;
+    case 'animal-P1-dog':
+      return animalPower.dog;
+    case 'animal-P2-dog':
+      return animalPower.dog;
+    case 'animal-P1-wolf':
+      return animalPower.wolf;
+    case 'animal-P2-wolf':
+      return animalPower.wolf;
+    case 'animal-P1-cat':
+      return animalPower.cat;
+    case 'animal-P2-cat':
+      return animalPower.cat;
+    case 'animal-P1-rat':
+      return animalPower.rat;
+    case 'animal-P2-rat':
+      return animalPower.rat;
+    default:
+      return null; // Default power if the animal name is not recognized
+  }
+};
+
 // =========================================================================
 
 //* Game Logic
+
 // compareAnimalPower()
+const compareAnimalPower = () => {
+
+}
+
 // canAnimalCrossRiver()
+// canAnimalEnterRiver()
 // didAnimalEnterTrap()
 // didAnimalEnterDen()
 // checkOpponentRemainingPieces()

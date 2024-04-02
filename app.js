@@ -1,8 +1,24 @@
 console.log("Webpage is working properly.");
 
+function Player(name, isStart, isActive) {
+  this.name = name;
+  this.isStart = isStart
+  this.isActive = isActive
+}
+
+function AnimalPiece(name, color, power, isAlive) {
+  this.name = name;
+  this.color = color;
+  this.power = power;
+  this.isAlive = isAlive
+}
+
+
 //* Global Variables (Start)
 // collect list of players name
-const namelist = [];
+let playerList = [];
+let arrayOfAnimalPiece = [];
+
 
 // * Global Variables (Game)
 // Update of occupy and non-occupied spaces
@@ -23,10 +39,10 @@ let animalPower = {
   rat: 1
 };
 
-let activePlayer = '';
-// TODO: is move allow for player
-// TODO: is P1 able to use animal piece to 'Eat' P2 animal piece
-// TODO: is it P2 turn
+
+
+
+
 
 // =========================================================================
 
@@ -40,62 +56,14 @@ intro.textContent = "To begin gameplay, enter 2 names in the input box below.";
 const playerName = document.getElementById("player-name");
 playerName.textContent = "Please wait... Game is selecting player to start...";
 
-// random select player name to start the game play
-const randomSelectName = () => {
-  return namelist[Math.floor(Math.random() * namelist.length)];
-}
-
-// loading and reveal player to start
-const loadReveal = () => {
-  const selectName = randomSelectName(); // exec randomSelectName()
-  activePlayer = selectName;
-  playerName.textContent = `Player '${activePlayer}' will start the gameplay.`;
-  console.log(activePlayer);
-}
-
-//exit loading
-const exitLoad = () => {
-  playerSelection.style.display = "none";
-  renderGameBoard();
-}
-
-// get player 1 name input
-let name1Input = document.getElementById("name1-input")
-let enter1 = document.getElementById("enter-name1");
-
-enter1.addEventListener("click", function () {
-  let name1 = name1Input.value;
-  namelist.push(name1);
-  enter1.style.display = "none"; // player 1 input confirm!!
-  // console.log(name1);
-  console.log("Name of Players", namelist);
-});
-
-// get player 2 name input
-let name2Input = document.getElementById("name2-input")
-let enter2 = document.getElementById("enter-name2");
-let start = document.getElementById("start");
-
-enter2.addEventListener("click", function () {
-  let name2 = name2Input.value;
-  namelist.push(name2);
-  enter2.style.display = "none"; // player 2 input confirm!!
-  intro.textContent = "Click the 'START' button to begin gameplay.";
-  start.style.display = "block"; // reveal Click to play button
-  // console.log(name2);
-  console.log("Name of Players", namelist);
-});
+let enter1btn = document.getElementById("name1");
+let enter2btn = document.getElementById("name2");
+let startbtn = document.getElementById("start");
 
 // click play button to begin gameplay
 const startPopup = document.getElementById("start-popup");
 const playerSelection = document.getElementById("player-selection");
 
-start.addEventListener("click", function () {
-  startPopup.style.display = "none"; // switch off Start-Popup
-  playerSelection.style.display = "block"; // show loading...
-  setTimeout(loadReveal, 1000); //show player to start
-  setTimeout(exitLoad, 3000); //exit loading... and reveal gameboard
-});
 
 // =========================================================================
 
@@ -105,23 +73,10 @@ start.addEventListener("click", function () {
 const selectAnimalPiece = (event) => {
   event.preventDefault();
 
-  // Check if it's Player 1's turn
-  if (activePlayer === namelist[0]) {
-    // Only allow selection of Player 1's pieces
-    if (!event.target.id.startsWith("animal-P1")) {
-      alert("It's not your turn to move Player 2!")
-      console.log("It's not your turn to move Player 2!");
-      return;
-    }
-  } else {
-    // Only allow selection of Player 2's pieces
-    if (!event.target.id.startsWith("animal-P2")) {
-      alert("It's not your turn to move Player 1!")
-      console.log("It's not your turn to move Player 1!");
-      return;
-    }
-  }
+  let isRightPlayer = isPlayerTurn(event.target.id)
+  if (!isRightPlayer) return
 
+  // Toggle select animal piece
   if (selectedPiece.name.length > 0) {
     removeHighlight(); // call remove Highlight function
     selectedPiece = { name: "", parentId: null };
@@ -273,6 +228,55 @@ const assignAnimalPower = (selectedPiece) => {
 };
 
 
+const createPlayer = (event) => {
+  event.preventDefault()
+  let elemId = event.target.id
+  let input = document.getElementById(elemId + "-input")
+  let inputValue = input.value
+  let player = new Player(inputValue, false, false)
+  playerList.push(player)
+  console.log('PL', playerList)
+  if (playerList.length === 2) {
+    startbtn.style.display = "block"
+  }
+}
+
+// random select player name to start the game play
+const randomSelectName = () => {
+  let selectedIdx = Math.floor(Math.random() * playerList.length)
+  playerList[selectedIdx].isStart = true
+  playerList[selectedIdx].isActive = true
+  return playerList[selectedIdx];
+}
+
+
+// loading and reveal player to start
+const loadReveal = () => {
+  const selectedPlayer = randomSelectName(); // exec randomSelectName()
+  playerName.textContent = `Player '${selectedPlayer.name}' will start the gameplay.`;
+  console.log('selectedPlayer', selectedPlayer);
+}
+
+//exit loading
+const exitLoad = () => {
+  playerSelection.style.display = "none";
+  renderGameBoard();
+}
+
+//validate isPlayerTurn
+const isPlayerTurn = (selectedId) => {
+  let activePlayer = playerList.find(player => player.isActive)
+
+  if (activePlayer.isStart && selectedId.startsWith("animal-P1")) {
+    return true
+  }
+  if (!activePlayer.isStart && selectedId.startsWith("animal-P2")) {
+    return true
+  }
+  alert("Please choose your own animal to move")
+  return false
+}
+
 // =========================================================================
 
 //* Game Logic
@@ -342,6 +346,16 @@ const renderGameBoard = () => {
 
 
 
+// =====================================================================
+
+enter1btn.addEventListener("click", createPlayer);
+enter2btn.addEventListener("click", createPlayer);
+startbtn.addEventListener("click", function () {
+  startPopup.style.display = "none"; // switch off Start-Popup
+  playerSelection.style.display = "block"; // show loading...
+  setTimeout(loadReveal, 1000); //show player to start
+  setTimeout(exitLoad, 3000); //exit loading... and reveal gameboard
+});
 
 
 

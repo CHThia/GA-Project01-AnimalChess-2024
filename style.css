@@ -47,12 +47,14 @@ body {
 
 #player-selection {
   background-color: rgb(41, 129, 23);
-  width: 400px;
+  width: 600px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 20px;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border-radius: 15px;
+  border-radius: px;
   display: none;
 }
 
@@ -60,8 +62,23 @@ body {
   color: white;
   text-align: center;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 12px;
+  font-size: 20px;
   font-weight: bold;
+}
+
+.End-Turn {
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 1050%);
+  display: none;
+}
+
+#end-turn {
+  background-color: rgb(233, 149, 22);
+  font-size: 30px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 #game-container {

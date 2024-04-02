@@ -11,6 +11,7 @@ let occupiedSquares = [];
 // selected piece will have animal piece name and parentId (white square)
 let selectedPiece = { name: "", parentId: null };
 
+// give animal piece Power value
 let animalPower = {
   elephant: 8,
   lion: 7,
@@ -22,6 +23,10 @@ let animalPower = {
   rat: 1
 };
 
+let activePlayer = '';
+// TODO: is move allow for player
+// TODO: is P1 able to use animal piece to 'Eat' P2 animal piece
+// TODO: is it P2 turn
 
 // =========================================================================
 
@@ -43,8 +48,9 @@ const randomSelectName = () => {
 // loading and reveal player to start
 const loadReveal = () => {
   const selectName = randomSelectName(); // exec randomSelectName()
-  playerName.textContent = `Player '${selectName}' will start the gameplay.`;
-  console.log(selectName);
+  activePlayer = selectName;
+  playerName.textContent = `Player '${activePlayer}' will start the gameplay.`;
+  console.log(activePlayer);
 }
 
 //exit loading
@@ -88,7 +94,7 @@ start.addEventListener("click", function () {
   startPopup.style.display = "none"; // switch off Start-Popup
   playerSelection.style.display = "block"; // show loading...
   setTimeout(loadReveal, 1000); //show player to start
-  setTimeout(exitLoad, 2500); //exit loading... and reveal gameboard
+  setTimeout(exitLoad, 3000); //exit loading... and reveal gameboard
 });
 
 // =========================================================================
@@ -98,6 +104,23 @@ start.addEventListener("click", function () {
 // select Animal Piece and move options (highlight squares)
 const selectAnimalPiece = (event) => {
   event.preventDefault();
+
+  // Check if it's Player 1's turn
+  if (activePlayer === namelist[0]) {
+    // Only allow selection of Player 1's pieces
+    if (!event.target.id.startsWith("animal-P1")) {
+      alert("It's not your turn to move Player 2!")
+      console.log("It's not your turn to move Player 2!");
+      return;
+    }
+  } else {
+    // Only allow selection of Player 2's pieces
+    if (!event.target.id.startsWith("animal-P2")) {
+      alert("It's not your turn to move Player 1!")
+      console.log("It's not your turn to move Player 1!");
+      return;
+    }
+  }
 
   if (selectedPiece.name.length > 0) {
     removeHighlight(); // call remove Highlight function
@@ -110,7 +133,7 @@ const selectAnimalPiece = (event) => {
     selectedPiece.parentId = parseInt(parentDivId);
     console.log('Animal piece selected', selectedPiece);
 
-    // Assign animal power to selected piece
+    // assign animal power to selected piece
     selectedPiece.power = assignAnimalPower(selectedPiece.name);
     console.log(selectedPiece.name, "has power:", selectedPiece.power);
 
@@ -118,6 +141,7 @@ const selectAnimalPiece = (event) => {
     highlightSurroundingDivs(parentDivId);
   }
 };
+
 
 // select Target Square function
 const selectTargetSquare = (event) => {
@@ -128,10 +152,13 @@ const selectTargetSquare = (event) => {
     return;
   }
 
+
   //TODO: check if target is occupied
+
 
   let targetedSquare = event.target.id;
   console.log(`Move animal piece to square id ${event.target.id}.`);
+
 
   //push event target id into occupiedSquare[]
   occupiedSquares.push(parseInt(targetedSquare));
@@ -204,6 +231,7 @@ const removeHighlight = () => {
   });
 };
 
+
 // assign Power Value to animal Piece for Player 1 and Player 2
 const assignAnimalPower = (selectedPiece) => {
   switch (selectedPiece) {
@@ -244,14 +272,21 @@ const assignAnimalPower = (selectedPiece) => {
   }
 };
 
+
 // =========================================================================
 
 //* Game Logic
 
 // compareAnimalPower()
-const compareAnimalPower = () => {
-
-}
+const compareAnimalPower = (attackerPower, defenderPower) => {
+  if (attackerPower > defenderPower) {
+    return 'attacker'; // Attacker wins
+  } else if (attackerPower < defenderPower) {
+    return 'defender'; // Defender wins
+  } else {
+    return 'tie'; // It's a tie
+  }
+};
 
 // canAnimalCrossRiver()
 // canAnimalEnterRiver()
@@ -282,6 +317,7 @@ const renderGameBoard = () => {
     //check for Animal Piece and place on gameboard
     if (tokens.indexOf(boardSetUp) > -1) {
       const animalPiece = document.createElement("div");
+      animalPiece.classList.add("animal");
       animalPiece.setAttribute("id", "animal-" + boardSetUp);
       square.appendChild(animalPiece);
       animalPiece.addEventListener("click", selectAnimalPiece);
@@ -299,7 +335,7 @@ const renderGameBoard = () => {
   })
 };
 
-renderGameBoard(); // call function (can be removed)
+// renderGameBoard(); // call function (can be removed)
 
 
 // TODO: add image source to token pieces

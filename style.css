@@ -66,18 +66,13 @@ body {
   font-weight: bold;
 }
 
-.End-Turn {
-  justify-content: center;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, 1050%);
+.end-turn-wrapper {
   display: none;
 }
 
 #end-turn {
-  background-color: rgb(233, 149, 22);
-  font-size: 30px;
+  margin-top: 850px;
+  text-align: center;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 

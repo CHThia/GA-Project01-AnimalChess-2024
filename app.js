@@ -1,14 +1,15 @@
 console.log("Webpage is working properly.");
 
-function Player(name, isStart, isActive) {
+function Player(name, id, isStart, isActive) {
   this.name = name;
+  this.id = id
   this.isStart = isStart
   this.isActive = isActive
 }
 
-function AnimalPiece(name, color, power, isAlive) {
+function AnimalPiece(name, owner, power, isAlive) {
   this.name = name;
-  this.color = color;
+  this.owner = owner;
   this.power = power;
   this.isAlive = isAlive
 }
@@ -17,7 +18,7 @@ function AnimalPiece(name, color, power, isAlive) {
 //* Global Variables (Start)
 // collect list of players name
 let playerList = [];
-let arrayOfAnimalPiece = [];
+let arrayOfAnimalPieces = [];
 
 
 // * Global Variables (Game)
@@ -39,6 +40,7 @@ let animalPower = {
   rat: 1
 };
 
+let nearbyAnimals = []
 
 
 
@@ -88,7 +90,7 @@ const selectAnimalPiece = (event) => {
     selectedPiece.parentId = parseInt(parentDivId);
     console.log('Animal piece selected', selectedPiece);
 
-    // assign animal power to selected piece
+    // assign animal power to selected piece -- to remove
     selectedPiece.power = assignAnimalPower(selectedPiece.name);
     console.log(selectedPiece.name, "has power:", selectedPiece.power);
 
@@ -101,6 +103,7 @@ const selectAnimalPiece = (event) => {
 // select Target Square function
 const selectTargetSquare = (event) => {
   event.preventDefault();
+
   if (selectedPiece.name.length === 0) {
     console.log(`Target square ${event.target.id} selected.`);
     alert("Please select Animal Piece to continue.");
@@ -109,7 +112,7 @@ const selectTargetSquare = (event) => {
 
 
   //TODO: check if target is occupied
-
+  //occupiedSquares.indexOf(event.target.id) > -1
 
   let targetedSquare = event.target.id;
   console.log(`Move animal piece to square id ${event.target.id}.`);
@@ -128,10 +131,12 @@ const selectTargetSquare = (event) => {
 
   //append selectedPiece >> New selected square
   let animalPiece = document.getElementById(selectedPiece.name);
+  console.log('new ap', animalPiece)
   let previousSelectedSquare = document.getElementById(selectedPiece.parentId);
   previousSelectedSquare.addEventListener("click", selectTargetSquare);
   event.target.appendChild(animalPiece);
   event.target.removeEventListener("click", selectTargetSquare);
+  showEndTurnBtn()
 
   //reset selectedPiece
   selectedPiece = { name: "", parentId: null };
@@ -171,6 +176,12 @@ const highlightSurroundingDivs = (parentDivId) => {
   // Extract Div id into an array
   Object.values(surroundingDiv).forEach((id) => {
     const surroundingDiv = document.getElementById(id.toString());
+    if (occupiedSquares.indexOf(id) > -1) {
+      let childId = surroundingDiv.childNodes[1].id
+      console.log("childNode", surroundingDiv.childNodes)
+      nearbyAnimals.push(childId);
+      console.log("nearbyanimals", nearbyAnimals)
+    }
     if (surroundingDiv) {
       surroundingDiv.classList.add('highlighted');
     }
@@ -232,20 +243,30 @@ const createPlayer = (event) => {
   event.preventDefault()
   let elemId = event.target.id
   let input = document.getElementById(elemId + "-input")
+  let btn = document.getElementById(elemId)
   let inputValue = input.value
-  let player = new Player(inputValue, false, false)
+  let player = new Player(inputValue, "", false, false)
   playerList.push(player)
   console.log('PL', playerList)
   if (playerList.length === 2) {
     startbtn.style.display = "block"
   }
+  btn.style.display = "none"
 }
 
 // random select player name to start the game play
 const randomSelectName = () => {
   let selectedIdx = Math.floor(Math.random() * playerList.length)
-  playerList[selectedIdx].isStart = true
-  playerList[selectedIdx].isActive = true
+  console.log('r', selectedIdx)
+  playerList.forEach((player, idx) => {
+    if (selectedIdx === idx) {
+      player.id = "P1"
+      player.isStart = true
+      player.isActive = true
+    } else {
+      player.id = "P2"
+    }
+  })
   return playerList[selectedIdx];
 }
 
@@ -267,15 +288,50 @@ const exitLoad = () => {
 const isPlayerTurn = (selectedId) => {
   let activePlayer = playerList.find(player => player.isActive)
 
-  if (activePlayer.isStart && selectedId.startsWith("animal-P1")) {
+  if (activePlayer.id === "P1" && selectedId.startsWith("animal-P1")) {
     return true
   }
-  if (!activePlayer.isStart && selectedId.startsWith("animal-P2")) {
+  if (activePlayer.id === "P2" && selectedId.startsWith("animal-P2")) {
     return true
   }
   alert("Please choose your own animal to move")
   return false
 }
+
+const showEndTurnBtn = () => {
+  let wrapperDiv = document.getElementById('end-turn')
+  let btn = document.getElementById('end-turn-btn')
+  wrapperDiv.style.display = 'block'
+  btn.addEventListener('click', endTurn)
+  console.log('show')
+}
+
+const endTurn = (event) => {
+  event.preventDefault()
+  playerList.forEach(player => {
+    if (player.isActive) {
+      player.isActive = false
+    } else {
+      player.isActive = true
+    }
+  })
+  let wrapperDiv = document.getElementById('end-turn')
+  wrapperDiv.style.display = 'none'
+}
+
+
+const initAnimalPieces = () => {
+  let players = ["P1", "P2"]
+  players.forEach(player => {
+    for (let key in animalPower) {
+      let token = new AnimalPiece(key, player, animalPower[key], true)
+      arrayOfAnimalPieces.push(token)
+    }
+  })
+  console.log('animalPieces', arrayOfAnimalPieces)
+}
+
+
 
 // =========================================================================
 
@@ -302,12 +358,29 @@ const compareAnimalPower = (attackerPower, defenderPower) => {
 
 //* GameBoard Setup
 
+const placeAnimalPiece = (pieceId, currIdx, targetArr) => {
+  let animalPiece = null
+  arrayOfAnimalPieces.forEach(piece => {
+    let tempName = piece.owner + "-" + piece.name
+    if (tempName === pieceId) {
+      animalPiece = document.createElement("div");
+      animalPiece.classList.add("animal");
+      animalPiece.setAttribute("id", "animal-" + pieceId);
+      animalPiece.addEventListener("click", selectAnimalPiece);
+      targetArr.push((parseInt(currIdx) + 1));
+    }
+  })
+  return animalPiece;
+}
+
 // render GameBoard function
 const gameBoard = document.querySelector("#gameboard");
 const renderGameBoard = () => {
 
   gameBoard.style.display = "flex";
   gameBoard.style.flexWrap = "wrap";
+
+  initAnimalPieces();
 
   boardSetUps.forEach((boardSetUp, idx) => {
     //create white squares and append to gameBoard
@@ -318,24 +391,23 @@ const renderGameBoard = () => {
     square.setAttribute("id", (idx + 1));
     gameBoard.append(square);
 
-    //check for Animal Piece and place on gameboard
-    if (tokens.indexOf(boardSetUp) > -1) {
-      const animalPiece = document.createElement("div");
-      animalPiece.classList.add("animal");
-      animalPiece.setAttribute("id", "animal-" + boardSetUp);
-      square.appendChild(animalPiece);
-      animalPiece.addEventListener("click", selectAnimalPiece);
-      occupiedSquares.push((idx + 1)); // all animal piece on white squares
-      // console.log("Animal Pieces location:", occupiedSquares); // log purposes
 
-      //check for Color Squares and indicate on gameboard
-    } else if (boardSetUp.length > 0) {
+    //check for Color Squares and indicate on gameboard
+    if (boardSetUp.length > 0) {
+      //check for Animal Piece and place on gameboard
       square.classList.add(boardSetUp);
       square.setAttribute("id", (idx + 1));
       square.addEventListener("click", selectTargetSquare);
     } else {
       square.addEventListener("click", selectTargetSquare); // white Squares
     }
+    let animalPiece = placeAnimalPiece(boardSetUp, idx, occupiedSquares);
+    if (animalPiece !== null) {
+      square.appendChild(animalPiece);
+      square.removeEventListener('click', selectTargetSquare)
+    }
+
+
   })
 };
 
@@ -343,7 +415,6 @@ const renderGameBoard = () => {
 
 
 // TODO: add image source to token pieces
-
 
 
 // =====================================================================

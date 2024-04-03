@@ -7,19 +7,18 @@ function Player(name, id, isStart, isActive) {
   this.isActive = isActive
 }
 
-function AnimalPiece(name, owner, power, isAlive) {
+function AnimalPiece(name, owner, power, isAlive, icon) {
   this.name = name;
   this.owner = owner;
   this.power = power;
   this.isAlive = isAlive
+  this.icon = icon;
 }
-
 
 //* Global Variables (Start)
 // collect list of players name
 let playerList = [];
 let arrayOfAnimalPieces = [];
-
 
 // * Global Variables (Game)
 // Update of occupy and non-occupied spaces
@@ -40,11 +39,20 @@ let animalPower = {
   rat: 1
 };
 
+// animal SVG icon
+let animalSvg = {
+  elephant: "svg/elephant.svg",
+  lion: "svg/lion.svg",
+  tiger: "svg/tiger.svg",
+  leopard: "svg/leopard.svg",
+  dog: "svg/dog.svg",
+  wolf: "svg/wolf.svg",
+  cat: "svg/cat.svg",
+  rat: "svg/rat.svg",
+}
+
+// use for finding nearby animal piece
 let nearbyAnimals = []
-
-
-
-
 
 // =========================================================================
 
@@ -65,7 +73,6 @@ let startbtn = document.getElementById("start");
 // click play button to begin gameplay
 const startPopup = document.getElementById("start-popup");
 const playerSelection = document.getElementById("player-selection");
-
 
 // =========================================================================
 
@@ -90,15 +97,15 @@ const selectAnimalPiece = (event) => {
     selectedPiece.parentId = parseInt(parentDivId);
     console.log('Animal piece selected', selectedPiece);
 
-    // assign animal power to selected piece -- to remove
-    selectedPiece.power = assignAnimalPower(selectedPiece.name);
-    console.log(selectedPiece.name, "has power:", selectedPiece.power);
+    //* assign animal power to selected piece (to remove code later)
+    // selectedPiece.power = assignAnimalPower(selectedPiece.name);
+    // console.log(selectedPiece.name, "has power:", selectedPiece.power);
+
 
     // call highlight SurroundingDivs function
     highlightSurroundingDivs(parentDivId);
   }
 };
-
 
 // select Target Square function
 const selectTargetSquare = (event) => {
@@ -238,6 +245,45 @@ const assignAnimalPower = (selectedPiece) => {
   }
 };
 
+// assign Power Value to animal Piece for Player 1 and Player 2
+const assignAnimalIcon = (selectedPiece) => {
+  switch (selectedPiece) {
+    case 'animal-P1-elephant':
+      return animalSvg.elephantP1;
+    case 'animal-P2-elephant':
+      return animalSvg.elephantP2;
+    case 'animal-P1-lion':
+      return animalSvg.lionP1;
+    case 'animal-P2-lion':
+      return animalSvg.lionP2;
+    case 'animal-P1-tiger':
+      return animalSvg.tigerP1;
+    case 'animal-P2-tiger':
+      return animalSvg.tigerP2;
+    case 'animal-P1-leopard':
+      return animalSvg.leopardP1;
+    case 'animal-P2-leopard':
+      return animalSvg.leopardP2;
+    case 'animal-P1-dog':
+      return animalSvg.dogP1;
+    case 'animal-P2-dog':
+      return animalSvg.dogP2;
+    case 'animal-P1-wolf':
+      return animalSvg.wolfP1;
+    case 'animal-P2-wolf':
+      return animalSvg.wolfP2;
+    case 'animal-P1-cat':
+      return animalSvg.catP1;
+    case 'animal-P2-cat':
+      return animalSvg.catP2;
+    case 'animal-P1-rat':
+      return animalSvg.ratP1;
+    case 'animal-P2-rat':
+      return animalSvg.ratP2;
+    default:
+      return null; // Default power if the animal name is not recognized
+  }
+};
 
 const createPlayer = (event) => {
   event.preventDefault()
@@ -319,7 +365,7 @@ const endTurn = (event) => {
   wrapperDiv.style.display = 'none'
 }
 
-
+// TODO: Attach animal SVG to each animal piece
 const initAnimalPieces = () => {
   let players = ["P1", "P2"]
   players.forEach(player => {
@@ -330,8 +376,6 @@ const initAnimalPieces = () => {
   })
   console.log('animalPieces', arrayOfAnimalPieces)
 }
-
-
 
 // =========================================================================
 
@@ -391,7 +435,6 @@ const renderGameBoard = () => {
     square.setAttribute("id", (idx + 1));
     gameBoard.append(square);
 
-
     //check for Color Squares and indicate on gameboard
     if (boardSetUp.length > 0) {
       //check for Animal Piece and place on gameboard
@@ -401,12 +444,12 @@ const renderGameBoard = () => {
     } else {
       square.addEventListener("click", selectTargetSquare); // white Squares
     }
+  
     let animalPiece = placeAnimalPiece(boardSetUp, idx, occupiedSquares);
     if (animalPiece !== null) {
       square.appendChild(animalPiece);
       square.removeEventListener('click', selectTargetSquare)
     }
-
 
   })
 };
@@ -424,8 +467,8 @@ enter2btn.addEventListener("click", createPlayer);
 startbtn.addEventListener("click", function () {
   startPopup.style.display = "none"; // switch off Start-Popup
   playerSelection.style.display = "block"; // show loading...
-  setTimeout(loadReveal, 1000); //show player to start
-  setTimeout(exitLoad, 3000); //exit loading... and reveal gameboard
+  setTimeout(loadReveal, 500); //show player to start (1000)
+  setTimeout(exitLoad, 1000); //exit loading... and reveal gameboard (3000)
 });
 
 

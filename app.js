@@ -39,18 +39,6 @@ let animalPower = {
   rat: 1
 };
 
-// animal SVG icon
-let animalSvg = {
-  elephant: "svg/elephant.svg",
-  lion: "svg/lion.svg",
-  tiger: "svg/tiger.svg",
-  leopard: "svg/leopard.svg",
-  dog: "svg/dog.svg",
-  wolf: "svg/wolf.svg",
-  cat: "svg/cat.svg",
-  rat: "svg/rat.svg",
-}
-
 // use for finding nearby animal piece
 let nearbyAnimals = []
 
@@ -365,15 +353,15 @@ const endTurn = (event) => {
   wrapperDiv.style.display = 'none'
 }
 
-// TODO: Attach animal SVG to each animal piece
 const initAnimalPieces = () => {
-  let players = ["P1", "P2"]
+  let players = ["P1", "P2"];
+  
   players.forEach(player => {
-    for (let key in animalPower) {
-      let token = new AnimalPiece(key, player, animalPower[key], true)
-      arrayOfAnimalPieces.push(token)
-    }
-  })
+      for (let key in animalPower) {
+        let token = new AnimalPiece(key, player, animalPower[key], true, "./svg/"+ player + "-" + key +".svg")
+        arrayOfAnimalPieces.push(token)
+      }
+  }) 
   console.log('animalPieces', arrayOfAnimalPieces)
 }
 
@@ -410,6 +398,7 @@ const placeAnimalPiece = (pieceId, currIdx, targetArr) => {
       animalPiece = document.createElement("div");
       animalPiece.classList.add("animal");
       animalPiece.setAttribute("id", "animal-" + pieceId);
+      animalPiece.style.backgroundImage = "url('" + piece.icon +"')";
       animalPiece.addEventListener("click", selectAnimalPiece);
       targetArr.push((parseInt(currIdx) + 1));
     }
@@ -456,8 +445,6 @@ const renderGameBoard = () => {
 
 // renderGameBoard(); // call function (can be removed)
 
-
-// TODO: add image source to token pieces
 
 
 // =====================================================================

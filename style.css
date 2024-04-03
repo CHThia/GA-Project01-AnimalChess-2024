@@ -1,4 +1,5 @@
 body {
+  background-color: rgb(180, 180, 180);
   background-image: url("svg/jungleBG-Startpage.svg");
   background-repeat: no-repeat;
   background-size: cover;
@@ -51,7 +52,8 @@ body {
 
 #player-selection {
   background-color: rgb(41, 129, 23);
-  width: 600px;
+  padding: 10px;
+  width: 500px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 20px;
   position: absolute;
@@ -71,13 +73,17 @@ body {
 }
 
 .end-turn-wrapper {
+  width: 200px;
+  position: absolute;
+  top: 91.5%;
+  left: 51.5%;
+  transform: translate(-50%, -50%);
   display: none;
 }
 
 #end-turn-btn {
   background-color: rgb(255, 251, 0);
-  margin-top: 850px;
-  margin-left: 638px;
+  width: 150px;
   font-size: large;
   text-align: center;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -86,7 +92,7 @@ body {
 #game-container {
   display: flex;
   position: absolute;
-  top: 50%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
 }

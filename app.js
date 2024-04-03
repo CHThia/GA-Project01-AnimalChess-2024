@@ -5,6 +5,7 @@ function Player(name, id, isStart, isActive) {
   this.id = id
   this.isStart = isStart
   this.isActive = isActive
+  this.numRemainingAnimals = 8
 }
 
 function AnimalPiece(name, owner, power, isAlive, icon) {
@@ -13,6 +14,11 @@ function AnimalPiece(name, owner, power, isAlive, icon) {
   this.power = power;
   this.isAlive = isAlive
   this.icon = icon;
+  this.canEat = (prey) => { 
+    console.log('ce', prey, this.power)
+    return this.power > prey.power 
+  }
+
 }
 
 //* Global Variables (Start)
@@ -26,6 +32,8 @@ let occupiedSquares = [];
 
 // selected piece will have animal piece name and parentId (white square)
 let selectedPiece = { name: "", parentId: null };
+
+let prevPiece = {name: "", parentId: null }
 
 // give animal piece Power value
 let animalPower = {
@@ -41,6 +49,13 @@ let animalPower = {
 
 // use for finding nearby animal piece
 let nearbyAnimals = []
+
+let surroundingDivs = {}
+
+let currentSelection = ''  //id
+let prevSelection = ''  //id
+
+let activePlayer = {}
 
 // =========================================================================
 
@@ -70,30 +85,90 @@ const playerSelection = document.getElementById("player-selection");
 const selectAnimalPiece = (event) => {
   event.preventDefault();
 
-  let isRightPlayer = isPlayerTurn(event.target.id)
-  if (!isRightPlayer) return
-
-  // Toggle select animal piece
-  if (selectedPiece.name.length > 0) {
+  //if player does not own clicked piece
+  if (!playerIsOwner(event.target.id)) {
+    if (selectedPiece.name.length > 0) {
+      console.log('1')
+      let isOwnerOfPrevPiece = playerIsOwner(selectedPiece.name)
+      if (isOwnerOfPrevPiece) {
+        let arr = selectedPiece.name.split('-')
+        let predator = arrayOfAnimalPieces.find(piece => {
+          if (piece.name === arr[2] && piece.owner === activePlayer.id) {
+            return piece
+          }
+        })
+        let arr2 = event.target.id.split('-')
+        let prey = arrayOfAnimalPieces.find(piece => {
+          if (piece.name === arr2[2] && piece.owner !== activePlayer.id) {
+            return piece
+          }
+        })
+        killAnimal(predator, prey, event.target.parentNode.id)
+        removeHighlight()
+        endTurn()
+        return
+      }
+    } else {
+      alert("Choose something you own")
+      return
+    }
+  } 
+  console.log('2')
+  if (selectedPiece.name === event.target.id) {
     removeHighlight(); // call remove Highlight function
     selectedPiece = { name: "", parentId: null };
-    console.log("Animal Piece deselected", selectedPiece);
     return;
   } else {
-    selectedPiece.name = event.target.id;
-    let parentDivId = event.target.parentNode.id; //get parentID of current square
-    selectedPiece.parentId = parseInt(parentDivId);
-    console.log('Animal piece selected', selectedPiece);
-
-    //* assign animal power to selected piece (to remove code later)
-    // selectedPiece.power = assignAnimalPower(selectedPiece.name);
-    // console.log(selectedPiece.name, "has power:", selectedPiece.power);
-
-
-    // call highlight SurroundingDivs function
-    highlightSurroundingDivs(parentDivId);
+    if (selectedPiece.name.length > 0) {
+      removeHighlight()
+    }
+    prevPiece.name = selectedPiece.name
+    prevPiece.parentId = selectedPiece.parentId
+    selectedPiece.name = event.target.id
+    selectedPiece.parentId = parseInt(event.target.parentNode.id); 
   }
+
+  // if (selectedPiece.name.length > 0) {
+  // } else {
+  //   selectedPiece.name = event.target.id
+  //   selectedPiece.parentId = parseInt(event.target.parentNode.id); 
+  // }
+
+  getSurroundingDivs(event.target.parentNode.id)
+  highlightSurroundingDivs(surroundingDivs);
+  
+  // let isRightPlayer = isPlayerTurn(event.target.id)
+  // if (!isRightPlayer) return
+
 };
+
+//click chesspiece --> is active player the owner of the chesspiece ---> no ---> alert move is not allowed
+
+//click chesspiece --> is active player the owner of the chesspiece ---> yes --> highlight surrounding --> click empty square -->check empty square is one of the surrounding sqs --> move to selected square --> end turn (switch active player)
+
+//click chesspiece --> highlight surrounding --> click on another chesspiece --> is player the owner ---> yes --> highlight surrounding divs --> click empty square -->check empty square is one of the surrounding sqs --> move to selected square --> end turn (switch active player)
+
+//click chesspiece --> highlight surrounding --> click on another chesspiece --> is player the owner ---> no ---> is chesspiece one in one of the surrounding space ---> yes --->  check can eat target chesspiece ---> yes --> move target chesspiece to side, move prev chesspiece to target square, deduct 1 from opponent --> end turn (switch active player)
+
+//click chesspiece --> highlight surrounding --> click on another chesspiece --> is player the owner ---> no ---> is chesspiece one in one of the surrounding space ---> yes --->  check can eat target chesspiece ---> no --> alert move is not allowed 
+
+//click chesspiece --> highlight surrounding --> click on another chesspiece --> is player the owner ---> no ---> is chesspiece one in one of the surrounding space ---> no --> alert move is not allowed
+
+
+const playerIsOwner = (selectedPieceId) => {
+  let arr = selectedPieceId.split('-')
+  console.log('active', activePlayer, 'sel', selectedPieceId)
+  return activePlayer.id === arr[1]
+}
+
+const isSurroundingSq = (squareId) => {
+  let arr = Object.values(surroundingDivs)
+  if (arr.indexOf(squareId) > -1) return true
+  return false
+}
+
+
+
 
 // select Target Square function
 const selectTargetSquare = (event) => {
@@ -142,43 +217,51 @@ const selectTargetSquare = (event) => {
 
 //* Helper Function
 
-// highlight SurroundingDiv function
-const highlightSurroundingDivs = (parentDivId) => {
-  // Calculate surrounding div IDs
-  let surroundingDiv = {
-    top: parseInt(parentDivId) - 7,
-    right: parseInt(parentDivId) + 1,
-    bottom: parseInt(parentDivId) + 7,
-    left: parseInt(parentDivId) - 1,
-  };
+const getSurroundingDivs = (parentDivId) => {
+   // Calculate surrounding div IDs
+   
+    surroundingDivs.top = parseInt(parentDivId) - 7
+    surroundingDivs.right = parseInt(parentDivId) + 1
+    surroundingDivs.bottom = parseInt(parentDivId) + 7
+    surroundingDivs.left = parseInt(parentDivId) - 1
+
   // Top Edge perimeter
   if (noTopSide.indexOf(parseInt(parentDivId)) > -1) {
-    surroundingDiv.top = 0;
+    surroundingDivs.top = 0;
   }
   // Right Edge perimeter
   if (noRightSide.indexOf(parseInt(parentDivId)) > -1) {
-    surroundingDiv.right = 0;
+    surroundingDivs.right = 0;
   }
   // Bottom Edge perimeter
   if (noBottomSide.indexOf(parseInt(parentDivId)) > -1) {
-    surroundingDiv.bottom = 0;
+    surroundingDivs.bottom = 0;
   }
   // Left Edge perimeter
   if (noLeftSide.indexOf(parseInt(parentDivId)) > -1) {
-    surroundingDiv.left = 0;
+    surroundingDivs.left = 0;
   }
+}
 
+// highlight SurroundingDiv function
+const highlightSurroundingDivs = (arrayOfDivs) => {
   // Extract Div id into an array
-  Object.values(surroundingDiv).forEach((id) => {
-    const surroundingDiv = document.getElementById(id.toString());
+  Object.values(arrayOfDivs).forEach((id) => {
+    let currDiv = document.getElementById(id.toString());
     if (occupiedSquares.indexOf(id) > -1) {
-      let childId = surroundingDiv.childNodes[1].id
-      console.log("childNode", surroundingDiv.childNodes)
-      nearbyAnimals.push(childId);
+      let childId = currDiv.childNodes[1].id
+      let animal = arrayOfAnimalPieces.find(piece => {
+        let arr = childId.split("-")
+        if (piece.owner === arr[1] && piece.name === arr[2] ) {
+          return piece
+        }
+      })
+
+      nearbyAnimals.push(animal);
       console.log("nearbyanimals", nearbyAnimals)
     }
-    if (surroundingDiv) {
-      surroundingDiv.classList.add('highlighted');
+    if (currDiv) {
+      currDiv.classList.add('highlighted');
     }
   });
 };
@@ -194,84 +277,84 @@ const removeHighlight = () => {
 
 
 // assign Power Value to animal Piece for Player 1 and Player 2
-const assignAnimalPower = (selectedPiece) => {
-  switch (selectedPiece) {
-    case 'animal-P1-elephant':
-      return animalPower.elephant;
-    case 'animal-P2-elephant':
-      return animalPower.elephant;
-    case 'animal-P1-lion':
-      return animalPower.lion;
-    case 'animal-P2-lion':
-      return animalPower.lion;
-    case 'animal-P1-tiger':
-      return animalPower.tiger;
-    case 'animal-P2-tiger':
-      return animalPower.tiger;
-    case 'animal-P1-leopard':
-      return animalPower.leopard;
-    case 'animal-P2-leopard':
-      return animalPower.leopard;
-    case 'animal-P1-dog':
-      return animalPower.dog;
-    case 'animal-P2-dog':
-      return animalPower.dog;
-    case 'animal-P1-wolf':
-      return animalPower.wolf;
-    case 'animal-P2-wolf':
-      return animalPower.wolf;
-    case 'animal-P1-cat':
-      return animalPower.cat;
-    case 'animal-P2-cat':
-      return animalPower.cat;
-    case 'animal-P1-rat':
-      return animalPower.rat;
-    case 'animal-P2-rat':
-      return animalPower.rat;
-    default:
-      return null; // Default power if the animal name is not recognized
-  }
-};
+// const assignAnimalPower = (selectedPiece) => {
+//   switch (selectedPiece) {
+//     case 'animal-P1-elephant':
+//       return animalPower.elephant;
+//     case 'animal-P2-elephant':
+//       return animalPower.elephant;
+//     case 'animal-P1-lion':
+//       return animalPower.lion;
+//     case 'animal-P2-lion':
+//       return animalPower.lion;
+//     case 'animal-P1-tiger':
+//       return animalPower.tiger;
+//     case 'animal-P2-tiger':
+//       return animalPower.tiger;
+//     case 'animal-P1-leopard':
+//       return animalPower.leopard;
+//     case 'animal-P2-leopard':
+//       return animalPower.leopard;
+//     case 'animal-P1-dog':
+//       return animalPower.dog;
+//     case 'animal-P2-dog':
+//       return animalPower.dog;
+//     case 'animal-P1-wolf':
+//       return animalPower.wolf;
+//     case 'animal-P2-wolf':
+//       return animalPower.wolf;
+//     case 'animal-P1-cat':
+//       return animalPower.cat;
+//     case 'animal-P2-cat':
+//       return animalPower.cat;
+//     case 'animal-P1-rat':
+//       return animalPower.rat;
+//     case 'animal-P2-rat':
+//       return animalPower.rat;
+//     default:
+//       return null; // Default power if the animal name is not recognized
+//   }
+// };
 
-// assign Power Value to animal Piece for Player 1 and Player 2
-const assignAnimalIcon = (selectedPiece) => {
-  switch (selectedPiece) {
-    case 'animal-P1-elephant':
-      return animalSvg.elephantP1;
-    case 'animal-P2-elephant':
-      return animalSvg.elephantP2;
-    case 'animal-P1-lion':
-      return animalSvg.lionP1;
-    case 'animal-P2-lion':
-      return animalSvg.lionP2;
-    case 'animal-P1-tiger':
-      return animalSvg.tigerP1;
-    case 'animal-P2-tiger':
-      return animalSvg.tigerP2;
-    case 'animal-P1-leopard':
-      return animalSvg.leopardP1;
-    case 'animal-P2-leopard':
-      return animalSvg.leopardP2;
-    case 'animal-P1-dog':
-      return animalSvg.dogP1;
-    case 'animal-P2-dog':
-      return animalSvg.dogP2;
-    case 'animal-P1-wolf':
-      return animalSvg.wolfP1;
-    case 'animal-P2-wolf':
-      return animalSvg.wolfP2;
-    case 'animal-P1-cat':
-      return animalSvg.catP1;
-    case 'animal-P2-cat':
-      return animalSvg.catP2;
-    case 'animal-P1-rat':
-      return animalSvg.ratP1;
-    case 'animal-P2-rat':
-      return animalSvg.ratP2;
-    default:
-      return null; // Default power if the animal name is not recognized
-  }
-};
+// // assign Power Value to animal Piece for Player 1 and Player 2
+// const assignAnimalIcon = (selectedPiece) => {
+//   switch (selectedPiece) {
+//     case 'animal-P1-elephant':
+//       return animalSvg.elephantP1;
+//     case 'animal-P2-elephant':
+//       return animalSvg.elephantP2;
+//     case 'animal-P1-lion':
+//       return animalSvg.lionP1;
+//     case 'animal-P2-lion':
+//       return animalSvg.lionP2;
+//     case 'animal-P1-tiger':
+//       return animalSvg.tigerP1;
+//     case 'animal-P2-tiger':
+//       return animalSvg.tigerP2;
+//     case 'animal-P1-leopard':
+//       return animalSvg.leopardP1;
+//     case 'animal-P2-leopard':
+//       return animalSvg.leopardP2;
+//     case 'animal-P1-dog':
+//       return animalSvg.dogP1;
+//     case 'animal-P2-dog':
+//       return animalSvg.dogP2;
+//     case 'animal-P1-wolf':
+//       return animalSvg.wolfP1;
+//     case 'animal-P2-wolf':
+//       return animalSvg.wolfP2;
+//     case 'animal-P1-cat':
+//       return animalSvg.catP1;
+//     case 'animal-P2-cat':
+//       return animalSvg.catP2;
+//     case 'animal-P1-rat':
+//       return animalSvg.ratP1;
+//     case 'animal-P2-rat':
+//       return animalSvg.ratP2;
+//     default:
+//       return null; // Default power if the animal name is not recognized
+//   }
+// };
 
 const createPlayer = (event) => {
   event.preventDefault()
@@ -308,6 +391,7 @@ const randomSelectName = () => {
 // loading and reveal player to start
 const loadReveal = () => {
   const selectedPlayer = randomSelectName(); // exec randomSelectName()
+  activePlayer = selectedPlayer
   playerName.textContent = `Player '${selectedPlayer.name}' will start the gameplay.`;
   console.log('selectedPlayer', selectedPlayer);
 }
@@ -315,6 +399,7 @@ const loadReveal = () => {
 //exit loading
 const exitLoad = () => {
   playerSelection.style.display = "none";
+  console.log('activeplayer', activePlayer)
   renderGameBoard();
 }
 
@@ -322,14 +407,13 @@ const exitLoad = () => {
 const isPlayerTurn = (selectedId) => {
   let activePlayer = playerList.find(player => player.isActive)
 
-  if (activePlayer.id === "P1" && selectedId.startsWith("animal-P1")) {
+  if (activePlayer.id === "P1" && selectedId.startsWith("animal-P1") || activePlayer.id === "P2" && selectedId.startsWith("animal-P2")) {
     return true
   }
-  if (activePlayer.id === "P2" && selectedId.startsWith("animal-P2")) {
-    return true
-  }
+  
   alert("Please choose your own animal to move")
   return false
+
 }
 
 const showEndTurnBtn = () => {
@@ -341,14 +425,22 @@ const showEndTurnBtn = () => {
 }
 
 const endTurn = (event) => {
-  event.preventDefault()
+  if (event !== undefined) {
+    event.preventDefault()
+  }  
   playerList.forEach(player => {
     if (player.isActive) {
       player.isActive = false
     } else {
       player.isActive = true
+      activePlayer = player
     }
+    console.log('pl', player)
   })
+  selectedPiece = { name: "", parentId: null };
+  prevPiece = { name: "", parentId: null };
+  console.log('endturn', playerList)
+  nearbyAnimals = [];
   let wrapperDiv = document.getElementById('end-turn')
   wrapperDiv.style.display = 'none'
 }
@@ -370,13 +462,22 @@ const initAnimalPieces = () => {
 //* Game Logic
 
 // compareAnimalPower()
-const compareAnimalPower = (attackerPower, defenderPower) => {
-  if (attackerPower > defenderPower) {
-    return 'attacker'; // Attacker wins
-  } else if (attackerPower < defenderPower) {
-    return 'defender'; // Defender wins
+
+const killAnimal = (animal1, animal2, targetSqId) => {
+  console.log('caneat', animal1.canEat(animal2))
+  if(animal1.canEat(animal2)){
+    let predator = document.getElementById("animal-" + animal1.owner + "-" + animal1.name)
+    let killedAnimal = document.getElementById("animal-" + animal2.owner + "-" + animal2.name);
+    let removeAnimal = document.getElementById("remove-animal");
+    removeAnimal.appendChild(killedAnimal); 
+    let targetSq = document.getElementById(targetSqId)
+    targetSq.appendChild(predator)
+    let opponent = playerList.find(player => {
+      if (!player.isActive) return player
+    })
+    opponent.numRemainingAnimals -= 1
   } else {
-    return 'tie'; // It's a tie
+    alert('Your teeth is not sharp enough!')
   }
 };
 
@@ -444,7 +545,6 @@ const renderGameBoard = () => {
 };
 
 // renderGameBoard(); // call function (can be removed)
-
 
 
 // =====================================================================

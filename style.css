@@ -1,8 +1,21 @@
 body {
   background-color: rgb(180, 180, 180);
-  background-image: url("svg/jungleBG-Startpage.svg");
+  background-image: url("svg/jungleBG-Startpage.png");
   background-repeat: no-repeat;
-  background-size: cover;
+}
+
+#remove-animal{
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  width: 200px;
+  height: 400px;
+  border-radius: 20px;
+  border: 3px solid rgb(134, 22, 22);
+  margin: 250px 12px 12px 75px;
+  text-align: center;
+  font-size: larger;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bold;
 }
 
 #start-popup {

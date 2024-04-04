@@ -17,15 +17,15 @@ function AnimalPiece(name, owner, power, isAlive, icon) {
   this.isAlive = isAlive;
   this.icon = icon;
   this.canEat = (prey) => { 
-    console.log('ce', prey, this.power)
+    console.log('Remove Animal', prey, this.power)
     return this.power > prey.power; 
   }
 }
 
 //* Global Variables (Start)
 
-let playerList = []; // collect list of players name
-let arrayOfAnimalPieces = [];
+let playerList = []; // collect the 2 players' name
+let arrayOfAnimalPieces = []; 
 
 // * Global Variables (Game)
 
@@ -48,10 +48,9 @@ let animalPower = {
   rat: 1
 };
 
-// use for finding nearby animal piece
-let nearbyAnimals = [];
+let nearbyAnimals = []; // use for finding nearby animal piece
 
-let surroundingDivs = {};
+let surroundingDivs = {}; 
 
 let currentSelection = '';  //id
 let prevSelection = '';  //id
@@ -78,6 +77,12 @@ let startbtn = document.getElementById("start");
 const startPopup = document.getElementById("start-popup");
 const playerSelection = document.getElementById("player-selection");
 
+//* End Game
+const endGameVisual = document.getElementById("endgame-visual");
+endGameVisual.style.display = "none";
+const winMessage = document.getElementById("win-message");
+winMessage.textContent = "Player Wins";
+
 // =========================================================================
 
 //* Game Controls
@@ -86,10 +91,10 @@ const playerSelection = document.getElementById("player-selection");
 const selectAnimalPiece = (event) => {
   event.preventDefault();
 
-  //if player does not own clicked piece
+  //if player does not own clicked animal piece
   if (!playerIsOwner(event.target.id)) {
     if (selectedPiece.name.length > 0) {
-      console.log('1')
+      console.log('Check 1 working.')
       let isOwnerOfPrevPiece = playerIsOwner(selectedPiece.name)
       if (isOwnerOfPrevPiece) {
         let arr = selectedPiece.name.split('-')
@@ -110,11 +115,11 @@ const selectAnimalPiece = (event) => {
         return;
       }
     } else {
-      alert("Choose something you own");
+      alert(`Stop messing around... Grrrr!! Please select your own animals.`);
       return;
     }
   } 
-  console.log('2')
+  console.log('Check 2 working.')
   if (selectedPiece.name === event.target.id) {
     removeHighlight(); // call remove Highlight function
     selectedPiece = { name: "", parentId: null };
@@ -129,38 +134,14 @@ const selectAnimalPiece = (event) => {
     selectedPiece.parentId = parseInt(event.target.parentNode.id); 
   }
 
-  // if (selectedPiece.name.length > 0) {
-  // } else {
-  //   selectedPiece.name = event.target.id
-  //   selectedPiece.parentId = parseInt(event.target.parentNode.id); 
-  // }
-
   getSurroundingDivs(event.target.parentNode.id)
   highlightSurroundingDivs(surroundingDivs);
   
-  // let isRightPlayer = isPlayerTurn(event.target.id)
-  // if (!isRightPlayer) return
-
 };
-
-
-//* Game Move Logic for players (REMOVE TEXTS LATER)
-//click chesspiece --> is active player the owner of the chesspiece ---> no ---> alert move is not allowed
-
-//click chesspiece --> is active player the owner of the chesspiece ---> yes --> highlight surrounding --> click empty square -->check empty square is one of the surrounding sqs --> move to selected square --> end turn (switch active player)
-
-//click chesspiece --> highlight surrounding --> click on another chesspiece --> is player the owner ---> yes --> highlight surrounding divs --> click empty square -->check empty square is one of the surrounding sqs --> move to selected square --> end turn (switch active player)
-
-//click chesspiece --> highlight surrounding --> click on another chesspiece --> is player the owner ---> no ---> is chesspiece one in one of the surrounding space ---> yes --->  check can eat target chesspiece ---> yes --> move target chesspiece to side, move prev chesspiece to target square, deduct 1 from opponent --> end turn (switch active player)
-
-//click chesspiece --> highlight surrounding --> click on another chesspiece --> is player the owner ---> no ---> is chesspiece one in one of the surrounding space ---> yes --->  check can eat target chesspiece ---> no --> alert move is not allowed 
-
-//click chesspiece --> highlight surrounding --> click on another chesspiece --> is player the owner ---> no ---> is chesspiece one in one of the surrounding space ---> no --> alert move is not allowed
-
 
 const playerIsOwner = (selectedPieceId) => {
   let arr = selectedPieceId.split('-')
-  console.log('active', activePlayer, 'sel', selectedPieceId)
+  console.log('active player', activePlayer, 'select:', selectedPieceId)
   return activePlayer.id === arr[1]
 }
 
@@ -184,7 +165,6 @@ const selectTargetSquare = (event) => {
   let targetedSquare = event.target.id;
   console.log(`Move animal piece to square id ${event.target.id}.`);
 
-
   //push event target id into occupiedSquare[]
   occupiedSquares.push(parseInt(targetedSquare));
   console.log(`Added NEW Parent id ${event.target.id}`, occupiedSquares);
@@ -198,12 +178,32 @@ const selectTargetSquare = (event) => {
 
   //append selectedPiece >> New selected square
   let animalPiece = document.getElementById(selectedPiece.name);
-  console.log('new ap', animalPiece)
+  let animalP1 = selectedPiece.name.split("-");
+  let animalP2 = selectedPiece.name.split("-"); 
   let previousSelectedSquare = document.getElementById(selectedPiece.parentId);
+
   previousSelectedSquare.addEventListener("click", selectTargetSquare);
-  event.target.appendChild(animalPiece);
   event.target.removeEventListener("click", selectTargetSquare);
-  showEndTurnBtn()
+  event.target.appendChild(animalPiece);
+  
+  // Winning conditions by entering beastDen
+  if (animalP1[1] === 'P1' && targetedSquare === '4'){
+    removeHighlight();
+    endGameVisual.style.display = "flex";
+    winMessage.style.display = "flex";
+    winMessage.textContent= "Player 1 Wins!!";
+    console.log("Player1 wins the game!!")
+    return;
+  } else if (animalP2[1] === 'P2' && targetedSquare === '60'){
+    removeHighlight();
+    endGameVisual.style.display = "flex";
+    winMessage.style.display = "flex";
+    winMessage.textContent= "Player 2 Wins!!";
+    console.log("Player2 wins the game!!")
+    return;
+  } else {
+    showEndTurnBtn(); // continue to play if no one wins
+  }
 
   //reset selectedPiece
   selectedPiece = { name: "", parentId: null };
@@ -246,7 +246,7 @@ const highlightSurroundingDivs = (arrayOfDivs) => {
   Object.values(arrayOfDivs).forEach((id) => {
     let currDiv = document.getElementById(id.toString());
     if (occupiedSquares.indexOf(id) > -1) {
-      let childId = currDiv.childNodes[1].id
+      let childId = currDiv.childNodes[1].id;
       let animal = arrayOfAnimalPieces.find(piece => {
         let arr = childId.split("-")
         if (piece.owner === arr[1] && piece.name === arr[2] ) {
@@ -272,88 +272,6 @@ const removeHighlight = () => {
   });
 };
 
-
-//* assign Power Value to animal Piece for Player 1 and Player 2
-// const assignAnimalPower = (selectedPiece) => {
-//   switch (selectedPiece) {
-//     case 'animal-P1-elephant':
-//       return animalPower.elephant;
-//     case 'animal-P2-elephant':
-//       return animalPower.elephant;
-//     case 'animal-P1-lion':
-//       return animalPower.lion;
-//     case 'animal-P2-lion':
-//       return animalPower.lion;
-//     case 'animal-P1-tiger':
-//       return animalPower.tiger;
-//     case 'animal-P2-tiger':
-//       return animalPower.tiger;
-//     case 'animal-P1-leopard':
-//       return animalPower.leopard;
-//     case 'animal-P2-leopard':
-//       return animalPower.leopard;
-//     case 'animal-P1-dog':
-//       return animalPower.dog;
-//     case 'animal-P2-dog':
-//       return animalPower.dog;
-//     case 'animal-P1-wolf':
-//       return animalPower.wolf;
-//     case 'animal-P2-wolf':
-//       return animalPower.wolf;
-//     case 'animal-P1-cat':
-//       return animalPower.cat;
-//     case 'animal-P2-cat':
-//       return animalPower.cat;
-//     case 'animal-P1-rat':
-//       return animalPower.rat;
-//     case 'animal-P2-rat':
-//       return animalPower.rat;
-//     default:
-//       return null; // Default power if the animal name is not recognized
-//   }
-// };
-
-//* assign Power Value to animal Piece for Player 1 and Player 2
-// const assignAnimalIcon = (selectedPiece) => {
-//   switch (selectedPiece) {
-//     case 'animal-P1-elephant':
-//       return animalSvg.elephantP1;
-//     case 'animal-P2-elephant':
-//       return animalSvg.elephantP2;
-//     case 'animal-P1-lion':
-//       return animalSvg.lionP1;
-//     case 'animal-P2-lion':
-//       return animalSvg.lionP2;
-//     case 'animal-P1-tiger':
-//       return animalSvg.tigerP1;
-//     case 'animal-P2-tiger':
-//       return animalSvg.tigerP2;
-//     case 'animal-P1-leopard':
-//       return animalSvg.leopardP1;
-//     case 'animal-P2-leopard':
-//       return animalSvg.leopardP2;
-//     case 'animal-P1-dog':
-//       return animalSvg.dogP1;
-//     case 'animal-P2-dog':
-//       return animalSvg.dogP2;
-//     case 'animal-P1-wolf':
-//       return animalSvg.wolfP1;
-//     case 'animal-P2-wolf':
-//       return animalSvg.wolfP2;
-//     case 'animal-P1-cat':
-//       return animalSvg.catP1;
-//     case 'animal-P2-cat':
-//       return animalSvg.catP2;
-//     case 'animal-P1-rat':
-//       return animalSvg.ratP1;
-//     case 'animal-P2-rat':
-//       return animalSvg.ratP2;
-//     default:
-//       return null; // Default power if the animal name is not recognized
-//   }
-// };
-
-
 const createPlayer = (event) => {
   event.preventDefault()
   let elemId = event.target.id
@@ -372,19 +290,18 @@ const createPlayer = (event) => {
 // random select player name to start the game play
 const randomSelectName = () => {
   let selectedIdx = Math.floor(Math.random() * playerList.length)
-  console.log('r', selectedIdx)
+  console.log('playerlist index', selectedIdx)
   playerList.forEach((player, idx) => {
     if (selectedIdx === idx) {
-      player.id = "P1"
-      player.isStart = true
-      player.isActive = true
+      player.id = "P1";
+      player.isStart = true;
+      player.isActive = true;
     } else {
-      player.id = "P2"
+      player.id = "P2";
     }
   })
   return playerList[selectedIdx];
 }
-
 
 // loading and reveal player to start
 const loadReveal = () => {
@@ -397,7 +314,9 @@ const loadReveal = () => {
 //exit loading
 const exitLoad = () => {
   playerSelection.style.display = "none";
-  console.log('activeplayer', activePlayer)
+  console.log('activeplayer', activePlayer);
+  let removeAnimal = document.getElementById("remove-animal");
+  removeAnimal.style.display = "flex";
   renderGameBoard();
 }
 
@@ -411,7 +330,6 @@ const isPlayerTurn = (selectedId) => {
   
   alert("Please choose your own animal to move")
   return false
-
 }
 
 const showEndTurnBtn = () => {
@@ -424,32 +342,33 @@ const showEndTurnBtn = () => {
 
 const endTurn = (event) => {
   if (event !== undefined) {
-    event.preventDefault()
+    event.preventDefault();
   }  
   playerList.forEach(player => {
     if (player.isActive) {
-      player.isActive = false
+      player.isActive = false;
     } else {
-      player.isActive = true
-      activePlayer = player
+      player.isActive = true;
+      activePlayer = player;
     }
-    console.log('pl', player)
+    console.log('pl', player);
   })
   selectedPiece = { name: "", parentId: null };
   prevPiece = { name: "", parentId: null };
   console.log('endturn', playerList)
   nearbyAnimals = [];
-  let wrapperDiv = document.getElementById('end-turn')
-  wrapperDiv.style.display = 'none'
+  let wrapperDiv = document.getElementById('end-turn');
+  wrapperDiv.style.display = 'none';
 }
 
+// starting state of the 16 animal pieces on the gameboard 
 const initAnimalPieces = () => {
   let players = ["P1", "P2"];
   
   players.forEach(player => {
       for (let key in animalPower) {
-        let token = new AnimalPiece(key, player, animalPower[key], true, "./svg/"+ player + "-" + key +".svg")
-        arrayOfAnimalPieces.push(token)
+        let token = new AnimalPiece(key, player, animalPower[key], true, "./svg/"+ player + "-" + key +".svg");
+        arrayOfAnimalPieces.push(token);
       }
   }) 
   console.log('animalPieces', arrayOfAnimalPieces)
@@ -461,7 +380,7 @@ const initAnimalPieces = () => {
 
 // Eliminate Animal
 const killAnimal = (animal1, animal2, targetSqId) => {
-  console.log('caneat', animal1.canEat(animal2))
+  console.log('Can eat opposing creature:', animal1.canEat(animal2))
   if(animal1.canEat(animal2)){
     let predator = document.getElementById("animal-" + animal1.owner + "-" + animal1.name)
     let killedAnimal = document.getElementById("animal-" + animal2.owner + "-" + animal2.name);
@@ -478,11 +397,10 @@ const killAnimal = (animal1, animal2, targetSqId) => {
   }
 };
 
-// TODO: Determine Win conditions
-// did AnimalEnterDen() -- Win 
+// TODO - Win Condition
 // check OpponentRemainingPieces() -- if 0, opposing player Win
 
-
+// TODO - Future Upgrades
 //* Optional -Extra consideration to add into the game
 // canAnimalCrossRiver()
 // canAnimalEnterRiver()
@@ -557,5 +475,20 @@ startbtn.addEventListener("click", function () {
   startPopup.style.display = "none"; // switch off Start-Popup
   playerSelection.style.display = "block"; // show loading...
   setTimeout(loadReveal, 1000); //show player to start (1000)
-  setTimeout(exitLoad, 3000); //exit loading... and reveal gameboard (3000)
+  setTimeout(exitLoad, 2500); //exit loading... and reveal gameboard (3000)
 });
+
+// =====================================================================
+
+//* Game Move Logic for players (REMOVE TEXTS LATER)
+//click chesspiece --> is active player the owner of the chesspiece ---> no ---> alert move is not allowed
+
+//click chesspiece --> is active player the owner of the chesspiece ---> yes --> highlight surrounding --> click empty square -->check empty square is one of the surrounding sqs --> move to selected square --> end turn (switch active player)
+
+//click chesspiece --> highlight surrounding --> click on another chesspiece --> is player the owner ---> yes --> highlight surrounding divs --> click empty square -->check empty square is one of the surrounding sqs --> move to selected square --> end turn (switch active player)
+
+//click chesspiece --> highlight surrounding --> click on another chesspiece --> is player the owner ---> no ---> is chesspiece one in one of the surrounding space ---> yes --->  check can eat target chesspiece ---> yes --> move target chesspiece to side, move prev chesspiece to target square, deduct 1 from opponent --> end turn (switch active player)
+
+//click chesspiece --> highlight surrounding --> click on another chesspiece --> is player the owner ---> no ---> is chesspiece one in one of the surrounding space ---> yes --->  check can eat target chesspiece ---> no --> alert move is not allowed 
+
+//click chesspiece --> highlight surrounding --> click on another chesspiece --> is player the owner ---> no ---> is chesspiece one in one of the surrounding space ---> no --> alert move is not allowed 

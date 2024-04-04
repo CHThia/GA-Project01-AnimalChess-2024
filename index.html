@@ -5,9 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Start Page</title>
-  <link type="text/css" rel="stylesheet" href="style.css">
-  <script src="board-piece.js" defer></script>
-  <script src="app.js" defer></script>
+  <link type="text/css" rel="stylesheet" href="css/main.css">
+  <script src="js/board-piece.js" defer></script>
+  <script src="js/main.js" defer></script>
 </head>
 
 <body>
@@ -52,12 +52,16 @@
   </div>
 
   <!-- container to store killed animal -->
-  <div id="remove-animal">Killed Animal</div>
+  <div id="remove-animal">
+    <p id="box-text">Eliminated Animal</p>
+  </div>
 
   <!-- End-Turn button -->
   <div class="end-turn-wrapper" id="end-turn">
     <button id="end-turn-btn" type="button">End Turn</button>
   </div>
+
+  <img id="background-pic" src="svg/jungleBG-Startpage.png" alt="jungle-image">
 
 </body>
 

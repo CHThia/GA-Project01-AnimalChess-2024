@@ -1,21 +1,31 @@
 body {
   background-color: rgb(180, 180, 180);
-  background-image: url("svg/jungleBG-Startpage.png");
-  background-repeat: no-repeat;
+}
+
+#background-pic {
+  position: fixed;
+  bottom:0;
+  left: 0;
+  z-index: -10;
 }
 
 #remove-animal{
   background-color: rgb(255, 255, 255);
   color: rgb(0, 0, 0);
   width: 200px;
-  height: 400px;
+  height: 600px;
   border-radius: 20px;
   border: 3px solid rgb(134, 22, 22);
-  margin: 250px 12px 12px 75px;
+  margin: 150px 12px 12px 75px;
+  display: flex;
+  flex-wrap:wrap;
+}
+
+#box-text {
+  margin: 20px 0 0 20px;
   text-align: center;
-  font-size: larger;
+  font-size: large;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-weight: bold;
 }
 
 #start-popup {
@@ -88,18 +98,25 @@ body {
 .end-turn-wrapper {
   width: 200px;
   position: absolute;
-  top: 91.5%;
-  left: 51.5%;
+  top: 45%;
+  left: 85%;
   transform: translate(-50%, -50%);
   display: none;
 }
 
 #end-turn-btn {
   background-color: rgb(255, 251, 0);
-  width: 150px;
-  font-size: large;
+  width: 200px;
+  padding: 10px;
+  border: 10px solid black;
+  font-size: 30px;
   text-align: center;
+  font-weight: bold;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#end-turn-btn:hover {
+  background-color: rgb(255, 78, 47);
 }
 
 #game-container {

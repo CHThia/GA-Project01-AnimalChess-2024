@@ -1,39 +1,40 @@
-console.log("Webpage is working properly.");
+console.log("Web Game is working properly.");
 
+// Class : Player
 function Player(name, id, isStart, isActive) {
   this.name = name;
-  this.id = id
-  this.isStart = isStart
-  this.isActive = isActive
-  this.numRemainingAnimals = 8
+  this.id = id;
+  this.isStart = isStart;
+  this.isActive = isActive;
+  this.numRemainingAnimals = 8;
 }
 
+// Class : Animal Pieces
 function AnimalPiece(name, owner, power, isAlive, icon) {
   this.name = name;
   this.owner = owner;
   this.power = power;
-  this.isAlive = isAlive
+  this.isAlive = isAlive;
   this.icon = icon;
   this.canEat = (prey) => { 
     console.log('ce', prey, this.power)
-    return this.power > prey.power 
+    return this.power > prey.power; 
   }
-
 }
 
 //* Global Variables (Start)
-// collect list of players name
-let playerList = [];
+
+let playerList = []; // collect list of players name
 let arrayOfAnimalPieces = [];
 
 // * Global Variables (Game)
-// Update of occupy and non-occupied spaces
-let occupiedSquares = [];
+
+let occupiedSquares = []; // Update of occupy and non-occupied spaces
 
 // selected piece will have animal piece name and parentId (white square)
 let selectedPiece = { name: "", parentId: null };
 
-let prevPiece = {name: "", parentId: null }
+let prevPiece = {name: "", parentId: null };
 
 // give animal piece Power value
 let animalPower = {
@@ -48,14 +49,14 @@ let animalPower = {
 };
 
 // use for finding nearby animal piece
-let nearbyAnimals = []
+let nearbyAnimals = [];
 
-let surroundingDivs = {}
+let surroundingDivs = {};
 
-let currentSelection = ''  //id
-let prevSelection = ''  //id
+let currentSelection = '';  //id
+let prevSelection = '';  //id
 
-let activePlayer = {}
+let activePlayer = {}; 
 
 // =========================================================================
 
@@ -94,7 +95,7 @@ const selectAnimalPiece = (event) => {
         let arr = selectedPiece.name.split('-')
         let predator = arrayOfAnimalPieces.find(piece => {
           if (piece.name === arr[2] && piece.owner === activePlayer.id) {
-            return piece
+            return piece;
           }
         })
         let arr2 = event.target.id.split('-')
@@ -104,13 +105,13 @@ const selectAnimalPiece = (event) => {
           }
         })
         killAnimal(predator, prey, event.target.parentNode.id)
-        removeHighlight()
-        endTurn()
-        return
+        removeHighlight();
+        endTurn();
+        return;
       }
     } else {
-      alert("Choose something you own")
-      return
+      alert("Choose something you own");
+      return;
     }
   } 
   console.log('2')
@@ -120,11 +121,11 @@ const selectAnimalPiece = (event) => {
     return;
   } else {
     if (selectedPiece.name.length > 0) {
-      removeHighlight()
+      removeHighlight();
     }
-    prevPiece.name = selectedPiece.name
-    prevPiece.parentId = selectedPiece.parentId
-    selectedPiece.name = event.target.id
+    prevPiece.name = selectedPiece.name;
+    prevPiece.parentId = selectedPiece.parentId;
+    selectedPiece.name = event.target.id;
     selectedPiece.parentId = parseInt(event.target.parentNode.id); 
   }
 
@@ -142,6 +143,8 @@ const selectAnimalPiece = (event) => {
 
 };
 
+
+//* Game Move Logic for players (REMOVE TEXTS LATER)
 //click chesspiece --> is active player the owner of the chesspiece ---> no ---> alert move is not allowed
 
 //click chesspiece --> is active player the owner of the chesspiece ---> yes --> highlight surrounding --> click empty square -->check empty square is one of the surrounding sqs --> move to selected square --> end turn (switch active player)
@@ -167,9 +170,6 @@ const isSurroundingSq = (squareId) => {
   return false
 }
 
-
-
-
 // select Target Square function
 const selectTargetSquare = (event) => {
   event.preventDefault();
@@ -180,10 +180,7 @@ const selectTargetSquare = (event) => {
     return;
   }
 
-
-  //TODO: check if target is occupied
   //occupiedSquares.indexOf(event.target.id) > -1
-
   let targetedSquare = event.target.id;
   console.log(`Move animal piece to square id ${event.target.id}.`);
 
@@ -276,7 +273,7 @@ const removeHighlight = () => {
 };
 
 
-// assign Power Value to animal Piece for Player 1 and Player 2
+//* assign Power Value to animal Piece for Player 1 and Player 2
 // const assignAnimalPower = (selectedPiece) => {
 //   switch (selectedPiece) {
 //     case 'animal-P1-elephant':
@@ -316,7 +313,7 @@ const removeHighlight = () => {
 //   }
 // };
 
-// // assign Power Value to animal Piece for Player 1 and Player 2
+//* assign Power Value to animal Piece for Player 1 and Player 2
 // const assignAnimalIcon = (selectedPiece) => {
 //   switch (selectedPiece) {
 //     case 'animal-P1-elephant':
@@ -355,6 +352,7 @@ const removeHighlight = () => {
 //       return null; // Default power if the animal name is not recognized
 //   }
 // };
+
 
 const createPlayer = (event) => {
   event.preventDefault()
@@ -461,8 +459,7 @@ const initAnimalPieces = () => {
 
 //* Game Logic
 
-// compareAnimalPower()
-
+// Eliminate Animal
 const killAnimal = (animal1, animal2, targetSqId) => {
   console.log('caneat', animal1.canEat(animal2))
   if(animal1.canEat(animal2)){
@@ -481,11 +478,15 @@ const killAnimal = (animal1, animal2, targetSqId) => {
   }
 };
 
+// TODO: Determine Win conditions
+// did AnimalEnterDen() -- Win 
+// check OpponentRemainingPieces() -- if 0, opposing player Win
+
+
+//* Optional -Extra consideration to add into the game
 // canAnimalCrossRiver()
 // canAnimalEnterRiver()
 // didAnimalEnterTrap()
-// didAnimalEnterDen()
-// checkOpponentRemainingPieces()
 
 // =========================================================================
 
@@ -540,7 +541,6 @@ const renderGameBoard = () => {
       square.appendChild(animalPiece);
       square.removeEventListener('click', selectTargetSquare)
     }
-
   })
 };
 
@@ -549,19 +549,13 @@ const renderGameBoard = () => {
 
 // =====================================================================
 
+// Initial clicks before game play starts
+
 enter1btn.addEventListener("click", createPlayer);
 enter2btn.addEventListener("click", createPlayer);
 startbtn.addEventListener("click", function () {
   startPopup.style.display = "none"; // switch off Start-Popup
   playerSelection.style.display = "block"; // show loading...
-  setTimeout(loadReveal, 500); //show player to start (1000)
-  setTimeout(exitLoad, 1000); //exit loading... and reveal gameboard (3000)
+  setTimeout(loadReveal, 1000); //show player to start (1000)
+  setTimeout(exitLoad, 3000); //exit loading... and reveal gameboard (3000)
 });
-
-
-
-
-
-
-
-

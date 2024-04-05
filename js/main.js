@@ -410,11 +410,6 @@ const killAnimal = (animal1, animal2, targetSqId) => {
   }
 };
 
-// TODO - Win Condition
-// check OpponentRemainingPieces() -- if 0, opposing player Win
-
-
-
 // TODO - Future Upgrades
 //* Optional -Extra consideration to add into the game
 // canAnimalCrossRiver()

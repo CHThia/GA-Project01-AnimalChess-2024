@@ -11,6 +11,7 @@ In my version of this game, the game-board do not use the special elements- "riv
 
 <h3>How to win the game</h3>
 To win the gameplay, one of the players must first manoeuvre any of the “animal” pieces into the opponent’s “beast den”.
+
 Alternatively, the game can be won if the opponent’s animal pieces is left with 1.
 <h3>How to move (animal piece)</h3>
   <ol>
@@ -35,3 +36,14 @@ Alternatively, the game can be won if the opponent’s animal pieces is left wit
 Animal piece with higher strength value can capture opposing animal with lower strength value. 
 
 For example, Wolf (Red color with strength value 4) is able to capture opposing Cat (Purple color with strength value 2).
+
+## Getting Started
+Click on the link below to begin gameplay -
+
+
+## Game Built 
+<ul>
+  <li>HTML
+  <li>CSS
+  <li>Javascript
+</ul>

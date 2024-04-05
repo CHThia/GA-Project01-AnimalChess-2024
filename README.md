@@ -7,6 +7,10 @@ The players also used a 7 x 9 game-board (consists of 63 squares) with special e
 
 In my version of this game, the game-board do not use the special elements- "river" and "traps".
 
+<p align="center">
+    <img width="200" src=".resource/animal-chess- board.png">
+</p>
+
 ## Game Rules
 
 <h3>How to win the game</h3>
@@ -37,9 +41,15 @@ Animal piece with higher strength value can capture opposing animal with lower s
 
 For example, Wolf (Red color with strength value 4) is able to capture opposing Cat (Purple color with strength value 2).
 
-## Getting Started
-Click on the link below to begin gameplay -
+## What is needed to play this game
+  <ul>
+    <li> Mouse and Keyboard
+    <li> 1-2 players (Solo-Play is allowed)
+  </ul>
 
+## Getting Started
+Click on the link to begin gameplay -
+https://king-of-the-jungle.vercel.app/
 
 ## Game Built 
 <ul>
@@ -47,3 +57,13 @@ Click on the link below to begin gameplay -
   <li>CSS
   <li>Javascript
 </ul>
+
+## Game Add-On (next version update)
+<li> Add in the special elements ("River", "Traps") into the game board
+<li> Lion and tiger has the ability to jump across the "River"
+<li> Rat is the only animal that can enter "River"
+<li> Any animal pieces that enters into the "Trap" will have '0' strength value 
+<li> Elephant can be capture by rat
+
+## Credit(s)
+<li> artmonkey (https://www.freepik.com/author/artmonkey)

@@ -8,7 +8,7 @@ The players also used a 7 x 9 game-board (consists of 63 squares) with special e
 In my version of this game, the game-board do not use the special elements- "river" and "traps".
 
 <p align="center">
-    <img width="200" src="resource/animal-chess- board.png">
+    <img width="300" src="resource/animal-chess-board.png">
 </p>
 
 ## Game Rules
@@ -17,6 +17,11 @@ In my version of this game, the game-board do not use the special elements- "riv
 To win the gameplay, one of the players must first manoeuvre any of the “animal” pieces into the opponent’s “beast den”.
 
 Alternatively, the game can be won if the opponent’s animal pieces is left with 1.
+
+<p align="center">
+    <img width="600" src="resource/Gameplay_04.JPG">
+</p>
+
 <h3>How to move (animal piece)</h3>
   <ol>
     <li>The player who is assigned to start the gameplay is allowed to move any animal pieces that are <strong>RED</strong> in color (marked with "P1").
@@ -25,6 +30,11 @@ Alternatively, the game can be won if the opponent’s animal pieces is left wit
     The current player will click to end his turn and pass the move action to the next player who controls the animal pieces 
     that are <strong>PURPLE</strong> in color (marked with "P2") .
   </ol>
+
+<p align="center">
+    <img width="600" src="resource/Gameplay_02.JPG">
+</p>
+
 <h3>What are the animals strength value</h3>
   <ul>
     <li> Elephant strength value - 8
@@ -41,6 +51,10 @@ Animal piece with higher strength value can capture opposing animal with lower s
 
 For example, Wolf (Red color with strength value 4) is able to capture opposing Cat (Purple color with strength value 2).
 
+<p align="center">
+    <img width="600" src="resource/Gameplay_03.JPG">
+</p>
+
 ## What is needed to play this game
   <ul>
     <li> Mouse and Keyboard
@@ -51,11 +65,13 @@ For example, Wolf (Red color with strength value 4) is able to capture opposing 
 Click on the link to begin gameplay -
 https://king-of-the-jungle.vercel.app/
 
-## Game Built 
+## Technologies Used:
 <ul>
   <li>HTML
   <li>CSS
   <li>Javascript
+  <li>Adobe Illustrator
+  <li>Adobe Photoshop
 </ul>
 
 ## Game Add-On (next version update)
@@ -65,5 +81,13 @@ https://king-of-the-jungle.vercel.app/
 <li> Any animal pieces that enters into the "Trap" will have '0' strength value 
 <li> Elephant can be capture by rat
 
+## Challenges during the making of this game
+
+
+## Key Learning points
+
+
 ## Credit(s)
 <li> artmonkey (https://www.freepik.com/author/artmonkey)
+<li> Animal Chess (https://en.wikipedia.org/wiki/Jungle_(board_game))
+

@@ -17,7 +17,7 @@ function AnimalPiece(name, owner, power, isAlive, icon) {
   this.isAlive = isAlive;
   this.icon = icon;
   this.canEat = (prey) => { 
-    console.log('Remove Animal', prey, this.power)
+    console.log('Remove Animal', prey, 'predator power:', this.power)
     return this.power > prey.power; 
   }
 }
@@ -332,6 +332,7 @@ const isPlayerTurn = (selectedId) => {
   return false
 }
 
+// show end turn button of player moves animal piece
 const showEndTurnBtn = () => {
   let wrapperDiv = document.getElementById('end-turn')
   let btn = document.getElementById('end-turn-btn')
@@ -340,6 +341,7 @@ const showEndTurnBtn = () => {
   console.log('show')
 }
 
+// pass the turn to next player after current player ends turn
 const endTurn = (event) => {
   if (event !== undefined) {
     event.preventDefault();
@@ -382,16 +384,27 @@ const initAnimalPieces = () => {
 const killAnimal = (animal1, animal2, targetSqId) => {
   console.log('Can eat opposing creature:', animal1.canEat(animal2))
   if(animal1.canEat(animal2)){
-    let predator = document.getElementById("animal-" + animal1.owner + "-" + animal1.name)
+    let predator = document.getElementById("animal-" + animal1.owner + "-" + animal1.name);
     let killedAnimal = document.getElementById("animal-" + animal2.owner + "-" + animal2.name);
     let removeAnimal = document.getElementById("remove-animal");
-    removeAnimal.appendChild(killedAnimal); 
+    removeAnimal.appendChild(killedAnimal); // send remove animal to "Remove animal" container
     let targetSq = document.getElementById(targetSqId)
-    targetSq.appendChild(predator)
+    targetSq.appendChild(predator) // attach predator's new location in the gameboard
     let opponent = playerList.find(player => {
       if (!player.isActive) return player
     })
-    opponent.numRemainingAnimals -= 1
+
+    opponent.numRemainingAnimals -= 1; // Update num of remaining animals
+    
+    // if player's remaining creature is 1, that player loses the game
+    if(opponent.numRemainingAnimals === 1){
+      removeHighlight();
+      endGameVisual.style.display = "flex";
+      winMessage.style.display = "flex";
+      winMessage.textContent= "Your Lost!!";
+      console.log(`You lost!!`);
+      return;
+    }
   } else {
     alert('Your teeth is not sharp enough!')
   }
@@ -399,6 +412,8 @@ const killAnimal = (animal1, animal2, targetSqId) => {
 
 // TODO - Win Condition
 // check OpponentRemainingPieces() -- if 0, opposing player Win
+
+
 
 // TODO - Future Upgrades
 //* Optional -Extra consideration to add into the game
@@ -464,7 +479,6 @@ const renderGameBoard = () => {
 
 // renderGameBoard(); // call function (can be removed)
 
-
 // =====================================================================
 
 // Initial clicks before game play starts
@@ -479,16 +493,3 @@ startbtn.addEventListener("click", function () {
 });
 
 // =====================================================================
-
-//* Game Move Logic for players (REMOVE TEXTS LATER)
-//click chesspiece --> is active player the owner of the chesspiece ---> no ---> alert move is not allowed
-
-//click chesspiece --> is active player the owner of the chesspiece ---> yes --> highlight surrounding --> click empty square -->check empty square is one of the surrounding sqs --> move to selected square --> end turn (switch active player)
-
-//click chesspiece --> highlight surrounding --> click on another chesspiece --> is player the owner ---> yes --> highlight surrounding divs --> click empty square -->check empty square is one of the surrounding sqs --> move to selected square --> end turn (switch active player)
-
-//click chesspiece --> highlight surrounding --> click on another chesspiece --> is player the owner ---> no ---> is chesspiece one in one of the surrounding space ---> yes --->  check can eat target chesspiece ---> yes --> move target chesspiece to side, move prev chesspiece to target square, deduct 1 from opponent --> end turn (switch active player)
-
-//click chesspiece --> highlight surrounding --> click on another chesspiece --> is player the owner ---> no ---> is chesspiece one in one of the surrounding space ---> yes --->  check can eat target chesspiece ---> no --> alert move is not allowed 
-
-//click chesspiece --> highlight surrounding --> click on another chesspiece --> is player the owner ---> no ---> is chesspiece one in one of the surrounding space ---> no --> alert move is not allowed 

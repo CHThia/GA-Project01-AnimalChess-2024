@@ -70,6 +70,11 @@ https://king-of-the-jungle.vercel.app/
   <li>HTML
   <li>CSS
   <li>Javascript
+  <li>GitHub (with Vercel)
+</ul>
+
+## Creative Softwares Used
+<ul>
   <li>Adobe Illustrator
   <li>Adobe Photoshop
 </ul>
@@ -82,10 +87,17 @@ https://king-of-the-jungle.vercel.app/
 <li> Elephant can be capture by rat
 
 ## Challenges during the making of this game
-
+One of my challenges in the beginning was not able to write short lines of codes. 
+Mostly were pretty long. After awhile, the whole bunch of codes became rather 
+messy and in many occassion, I got confused and lost.
 
 ## Key Learning points
-
+<ol>
+  <li> I picked up the concept of constructor and implemented it into the game.
+  <li> As there are many methods to build things, I was able to use arrays to create the game-board.
+  <li> Take time to refractor or clean up the written codes ( e.g. "const name = () => {}" ) 
+  <li> Build the logic or structure of the game before anything else.
+</ol>
 
 ## Credit(s)
 <li> artmonkey (https://www.freepik.com/author/artmonkey)

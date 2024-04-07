@@ -84,7 +84,6 @@ https://king-of-the-jungle.vercel.app/
 <li> Lion and tiger has the ability to jump across the "River"
 <li> Rat is the only animal that can enter "River"
 <li> Any animal pieces that enters into the "Trap" will have '0' strength value 
-<li> Elephant can be capture by rat
 
 ## Challenges during the making of this game
 One of my challenges in the beginning was not able to write short lines of codes. 

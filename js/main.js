@@ -18,7 +18,7 @@ function AnimalPiece(name, owner, power, isAlive, icon) {
   this.icon = icon;
   this.canEat = (prey) => { 
     console.log('Remove Animal', prey, 'predator power:', this.power)
-    return this.power > prey.power; 
+    return this.power >= prey.power; 
   }
 }
 
@@ -135,6 +135,7 @@ const selectAnimalPiece = (event) => {
   }
 
   getSurroundingDivs(event.target.parentNode.id)
+  console.log('138', surroundingDivs)
   highlightSurroundingDivs(surroundingDivs);
   
 };
@@ -383,8 +384,10 @@ const initAnimalPieces = () => {
 // Eliminate Animal
 const killAnimal = (animal1, animal2, targetSqId) => {
   console.log('Can eat opposing creature:', animal1.canEat(animal2))
-  if(animal1.canEat(animal2)){
+  if(animal1.canEat(animal2) || (animal1.name === 'rat' && animal2.name === 'elephant')){
     let predator = document.getElementById("animal-" + animal1.owner + "-" + animal1.name);
+    let predatorsq = parseInt(predator.parentNode.id)
+    occupiedSquares.splice(occupiedSquares.indexOf(predatorsq), 1)
     let killedAnimal = document.getElementById("animal-" + animal2.owner + "-" + animal2.name);
     let removeAnimal = document.getElementById("remove-animal");
     removeAnimal.appendChild(killedAnimal); // send remove animal to "Remove animal" container
@@ -396,8 +399,8 @@ const killAnimal = (animal1, animal2, targetSqId) => {
 
     opponent.numRemainingAnimals -= 1; // Update num of remaining animals
     
-    // if player's remaining creature is 1, that player loses the game
-    if(opponent.numRemainingAnimals === 1){
+    // if player's remaining creature is 0, that player loses the game
+    if(opponent.numRemainingAnimals === 0){
       removeHighlight();
       endGameVisual.style.display = "flex";
       winMessage.style.display = "flex";
@@ -411,7 +414,6 @@ const killAnimal = (animal1, animal2, targetSqId) => {
 };
 
 // TODO - Future Upgrades
-//* Optional -Extra consideration to add into the game
 // canAnimalCrossRiver()
 // canAnimalEnterRiver()
 // didAnimalEnterTrap()
@@ -472,7 +474,7 @@ const renderGameBoard = () => {
   })
 };
 
-// renderGameBoard(); // call function (can be removed)
+// renderGameBoard(); // For Development testing (Do Not Remove) 
 
 // =====================================================================
 

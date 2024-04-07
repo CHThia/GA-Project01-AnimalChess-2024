@@ -1,3 +1,5 @@
+//*----- constants -----*//
+
 // gameboard setup
 const boardSetUps = [
   "P2-lion", "", "traps", "beastDen", "traps", "", "P2-tiger",
@@ -20,4 +22,3 @@ const noLeftSide = [1, 8, 15, 22, 29, 36, 43, 50, 57];
 // define squares with special element
 const colorSquares = ["traps", "beastDen", "river"];
 
-// =========================================================================

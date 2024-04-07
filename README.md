@@ -47,9 +47,13 @@ Alternatively, the game can be won if the opponent’s animal pieces is left wit
     <li> Rat strength value - 1
   </ul>    
 <h3>How to capture opponent's animal pieces</h3>
-Animal piece with higher strength value can capture opposing animal with lower strength value. 
+Most animal pieces with higher strength value can capture opposing animals with lower strength value. 
 
 For example, Wolf (Red color with strength value 4) is able to capture opposing Cat (Purple color with strength value 2).
+
+On the side note, Rat is unqique beacuse of it's ability to capture opposing player's Elephant.
+
+(Based on rumours - A rat can enter an elephant's big ear to kill it.)
 
 <p align="center">
     <img width="600" src="resource/Gameplay_03.JPG">
@@ -84,6 +88,14 @@ https://king-of-the-jungle.vercel.app/
 <li> Lion and tiger has the ability to jump across the "River"
 <li> Rat is the only animal that can enter "River"
 <li> Any animal pieces that enters into the "Trap" will have '0' strength value 
+
+## Wireframe of the game during planning stage
+The wireframe was based on the initial idea. Some design layout was changed as the development of 
+the game progresses but generally, the essence of the idea remains.
+
+<p align="center">
+    <img width="600" src="resource/Animal Chess Wireframe.jpg">
+</p>
 
 ## Challenges during the making of this game
 One of my challenges in the beginning was not able to write short lines of codes. 

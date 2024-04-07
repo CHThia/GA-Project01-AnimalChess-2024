@@ -1,6 +1,9 @@
 console.log("Web Game is working properly.");
 
-// Class : Player
+
+//*----- constants -----*//
+
+//Class : Player
 function Player(name, id, isStart, isActive) {
   this.name = name;
   this.id = id;
@@ -9,7 +12,7 @@ function Player(name, id, isStart, isActive) {
   this.numRemainingAnimals = 8;
 }
 
-// Class : Animal Pieces
+//Class : Animal Pieces
 function AnimalPiece(name, owner, power, isAlive, icon) {
   this.name = name;
   this.owner = owner;
@@ -21,20 +24,6 @@ function AnimalPiece(name, owner, power, isAlive, icon) {
     return this.power >= prey.power; 
   }
 }
-
-//* Global Variables (Start)
-
-let playerList = []; // collect the 2 players' name
-let arrayOfAnimalPieces = []; 
-
-// * Global Variables (Game)
-
-let occupiedSquares = []; // Update of occupy and non-occupied spaces
-
-// selected piece will have animal piece name and parentId (white square)
-let selectedPiece = { name: "", parentId: null };
-
-let prevPiece = {name: "", parentId: null };
 
 // give animal piece Power value
 let animalPower = {
@@ -48,18 +37,32 @@ let animalPower = {
   rat: 1
 };
 
-let nearbyAnimals = []; // use for finding nearby animal piece
 
+//*----- state variables -----*//
+
+let playerList = []; // collect the 2 players' name
+let arrayOfAnimalPieces = []; 
+
+let occupiedSquares = []; // Update of occupy and non-occupied spaces
+
+// selected piece will have animal piece name and parentId (white square)
+let selectedPiece = { name: "", parentId: null };
+let prevPiece = {name: "", parentId: null };
+
+// use for finding nearby animal piece
+let nearbyAnimals = []; 
 let surroundingDivs = {}; 
 
-let currentSelection = '';  //id
-let prevSelection = '';  //id
+// id of current and previous selection
+let currentSelection = ''; 
+let prevSelection = ''; 
 
+// to identify current player for turn-based features
 let activePlayer = {}; 
 
-// =========================================================================
 
-//* Player Details (Start)
+
+//*----- cached elements  -----*//
 
 // introduction text
 const intro = document.getElementById("intro");
@@ -77,15 +80,16 @@ let startbtn = document.getElementById("start");
 const startPopup = document.getElementById("start-popup");
 const playerSelection = document.getElementById("player-selection");
 
-//* End Game
+// End Game
 const endGameVisual = document.getElementById("endgame-visual");
 endGameVisual.style.display = "none";
 const winMessage = document.getElementById("win-message");
 winMessage.textContent = "Player Wins";
 
-// =========================================================================
 
-//* Game Controls
+//*----- functions -----*//
+
+//------ Game Control Function ------//
 
 // select Animal Piece and move options (highlight squares)
 const selectAnimalPiece = (event) => {
@@ -135,7 +139,7 @@ const selectAnimalPiece = (event) => {
   }
 
   getSurroundingDivs(event.target.parentNode.id)
-  console.log('138', surroundingDivs)
+  console.log('141', surroundingDivs)
   highlightSurroundingDivs(surroundingDivs);
   
 };
@@ -155,27 +159,23 @@ const isSurroundingSq = (squareId) => {
 // select Target Square function
 const selectTargetSquare = (event) => {
   event.preventDefault();
-
+  console.log('sel target sq', occupiedSquares)
   if (selectedPiece.name.length === 0) {
-    console.log(`Target square ${event.target.id} selected.`);
     alert("Please select Animal Piece to continue.");
     return;
   }
 
   //occupiedSquares.indexOf(event.target.id) > -1
   let targetedSquare = event.target.id;
-  console.log(`Move animal piece to square id ${event.target.id}.`);
+
 
   //push event target id into occupiedSquare[]
   occupiedSquares.push(parseInt(targetedSquare));
-  console.log(`Added NEW Parent id ${event.target.id}`, occupiedSquares);
 
   //remove previous Parent id of selectedPiece from occupiedSquare array
   let parentId = parseInt(selectedPiece.parentId);
   let parentIdx = occupiedSquares.indexOf(parentId);
-  console.log('Remove Parent id', parentId);
   occupiedSquares.splice(parentIdx, 1);
-  console.log('after remove', occupiedSquares);
 
   //append selectedPiece >> New selected square
   let animalPiece = document.getElementById(selectedPiece.name);
@@ -193,14 +193,12 @@ const selectTargetSquare = (event) => {
     endGameVisual.style.display = "flex";
     winMessage.style.display = "flex";
     winMessage.textContent= "Player 1 Wins!!";
-    console.log("Player1 wins the game!!")
     return;
   } else if (animalP2[1] === 'P2' && targetedSquare === '60'){
     removeHighlight();
     endGameVisual.style.display = "flex";
     winMessage.style.display = "flex";
     winMessage.textContent= "Player 2 Wins!!";
-    console.log("Player2 wins the game!!")
     return;
   } else {
     showEndTurnBtn(); // continue to play if no one wins
@@ -211,9 +209,8 @@ const selectTargetSquare = (event) => {
   removeHighlight();
 }
 
-// =========================================================================
 
-//* Helper Function
+//------ Helper Function ------//
 
 const getSurroundingDivs = (parentDivId) => {
    // Calculate surrounding div IDs
@@ -246,7 +243,10 @@ const highlightSurroundingDivs = (arrayOfDivs) => {
   // Extract Div id into an array
   Object.values(arrayOfDivs).forEach((id) => {
     let currDiv = document.getElementById(id.toString());
+    console.log('1', occupiedSquares)
+    console.log('2', arrayOfDivs)
     if (occupiedSquares.indexOf(id) > -1) {
+      console.log('1', occupiedSquares)
       let childId = currDiv.childNodes[1].id;
       let animal = arrayOfAnimalPieces.find(piece => {
         let arr = childId.split("-")
@@ -271,6 +271,7 @@ const removeHighlight = () => {
   highlightedDivs.forEach((divSquare) => {
     divSquare.classList.remove('highlighted');
   });
+  console.log('removeHL', occupiedSquares)
 };
 
 const createPlayer = (event) => {
@@ -339,7 +340,6 @@ const showEndTurnBtn = () => {
   let btn = document.getElementById('end-turn-btn')
   wrapperDiv.style.display = 'block'
   btn.addEventListener('click', endTurn)
-  console.log('show')
 }
 
 // pass the turn to next player after current player ends turn
@@ -377,9 +377,8 @@ const initAnimalPieces = () => {
   console.log('animalPieces', arrayOfAnimalPieces)
 }
 
-// =========================================================================
 
-//* Game Logic
+//------ Game Logic ------//
 
 // Eliminate Animal
 const killAnimal = (animal1, animal2, targetSqId) => {
@@ -393,6 +392,9 @@ const killAnimal = (animal1, animal2, targetSqId) => {
     removeAnimal.appendChild(killedAnimal); // send remove animal to "Remove animal" container
     let targetSq = document.getElementById(targetSqId)
     targetSq.appendChild(predator) // attach predator's new location in the gameboard
+    let predatorSpace = document.getElementById(predatorsq)
+    predatorSpace.addEventListener('click', selectTargetSquare)
+    targetSq.removeEventListener('click', selectTargetSquare)
     let opponent = playerList.find(player => {
       if (!player.isActive) return player
     })
@@ -413,14 +415,14 @@ const killAnimal = (animal1, animal2, targetSqId) => {
   }
 };
 
+
 // TODO - Future Upgrades
 // canAnimalCrossRiver()
 // canAnimalEnterRiver()
 // didAnimalEnterTrap()
 
-// =========================================================================
 
-//* GameBoard Setup
+//------ GameBoard Setup ------//
 
 const placeAnimalPiece = (pieceId, currIdx, targetArr) => {
   let animalPiece = null
@@ -438,7 +440,6 @@ const placeAnimalPiece = (pieceId, currIdx, targetArr) => {
   return animalPiece;
 }
 
-// render GameBoard function
 const gameBoard = document.querySelector("#gameboard");
 const renderGameBoard = () => {
 
@@ -450,8 +451,8 @@ const renderGameBoard = () => {
   boardSetUps.forEach((boardSetUp, idx) => {
     //create white squares and append to gameBoard
     const square = document.createElement("div");
-    square.style.fontSize = "10px"; // to remove later; now for num reference only
-    square.innerText = idx + 1; // to remove later; now for num reference only
+    square.style.fontSize = "10px"; // num sq ref for dev use (Do Not Delete)
+    square.innerText = idx + 1; // num sq ref for dev use (Do Not Delete)
     square.classList.add("square");
     square.setAttribute("id", (idx + 1));
     gameBoard.append(square);
@@ -476,7 +477,8 @@ const renderGameBoard = () => {
 
 // renderGameBoard(); // For Development testing (Do Not Remove) 
 
-// =====================================================================
+
+ //*----- event listeners -----*//
 
 // Initial clicks before game play starts
 
@@ -488,5 +490,3 @@ startbtn.addEventListener("click", function () {
   setTimeout(loadReveal, 1000); //show player to start (1000)
   setTimeout(exitLoad, 2500); //exit loading... and reveal gameboard (3000)
 });
-
-// =====================================================================

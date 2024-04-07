@@ -51,12 +51,11 @@ Most animal pieces with higher strength value can capture opposing animals with 
 
 For example, Wolf (Red color with strength value 4) is able to capture opposing Cat (Purple color with strength value 2).
 
-On the side note, Rat is unqique beacuse of it's ability to capture opposing player's Elephant.
-
+On the side note, Rat is unique because of it's ability to capture opposing player's Elephant.
 (Based on rumours - A rat can enter an elephant's big ear to kill it.)
 
 <p align="center">
-    <img width="600" src="resource/Gameplay_03.JPG">
+    <img width="700" src="resource/Gameplay_03.JPG">
 </p>
 
 ## What is needed to play this game
